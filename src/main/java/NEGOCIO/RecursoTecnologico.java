@@ -1,6 +1,11 @@
 package NEGOCIO;
 
 public class RecursoTecnologico {
+    private String disponible = "Disponible";
+    private String enUso = "En uso";
+    private String danado = "Dañado";
+    private String fueraDeServicio = "Fuera de Servicio";
+
     private String identificador;
     private String descripcion;
     private String tipoRecurso;
@@ -22,7 +27,7 @@ public class RecursoTecnologico {
         this.cantidadEnUso = 0;
         this.cantidadDaniada = 0;
         this.cantidadPerdidaAcumulada = 0;
-        this.estado = "Disponible";
+        this.estado = disponible;
     }
 
     public String getIdentificador() {
@@ -113,11 +118,9 @@ public class RecursoTecnologico {
                 "Valor Unitario = " + this.valorUnitario + "\n" +
                 "Cantidad Total = " + this.cantidadTotal + "\n" +
                 "Estado = " + this.estado + "\n" +
-                "Cantidad Dispobible = " + this.cantidadDisponible + "\n" +
+                "Cantidad Disponible = " + this.cantidadDisponible + "\n" +
                 "Cantidad En Uso = " + this.cantidadEnUso + "\n" +
                 "Cantidad Dañada = " + this.cantidadDaniada + "\n" +
                 "Cantidad Perdida Acumulada = " + this.cantidadPerdidaAcumulada;
-    }
-    
-    
+    }    
 }

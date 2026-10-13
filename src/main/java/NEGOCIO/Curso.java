@@ -1,6 +1,13 @@
 package NEGOCIO;
 
 public class Curso {
+    private String programado = "PROGRAMADO";
+    private String inscripcionesAbiertas = "INSCRIPCIONES_ABIERTAS";
+    private String enFormacion = "EN_FORMACION";
+    private String finalizado = "FINALIZADO";
+    private String cancelado = "CANCELADO";
+    private int maxRecursos = 5;
+
     private String nombreCurso;
     private String areaTecnologica;
     private String fechaInicio;
@@ -34,13 +41,13 @@ public class Curso {
         this.entidadSolicitante = entidadSolicitante;
         this.codigo = codigo;
         this.myInstructor = myInstructor;
-        this.estadoCurso = "Programado";
+        this.estadoCurso = programado;
         this.myInscripciones = new Inscripcion[cupoCurso];
-        this.myRecursosEntregados = new RecursoTecnologico[5];
-        this.cantidadEntregada = new int[5];
-        this.cantidadBuena = new int[5];
-        this.cantidadDaniada = new int[5];
-        this.cantidadPerdida = new int[5];
+        this.myRecursosEntregados = new RecursoTecnologico[maxRecursos];
+        this.cantidadEntregada = new int[maxRecursos];
+        this.cantidadBuena = new int[maxRecursos];
+        this.cantidadDaniada = new int[maxRecursos];
+        this.cantidadPerdida = new int[maxRecursos];
     }
     
     public String getNombreCurso(){
@@ -152,11 +159,6 @@ public class Curso {
                 "Entidad solicitante = " + this.entidadSolicitante + "\n" +
                 "Estado del curso=" + this.estadoCurso + "\n" +
                 "Código = " + this.codigo + "\n" +
-                "Instructor = " + this.myInstructor.getNombre();
-    }
-    
-    
-    
-    
-    
+                "Instructor = " + (this.myInstructor == null ? "Sin asignar" : this.myInstructor.getNombre());
+    }    
 }

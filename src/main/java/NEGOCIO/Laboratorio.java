@@ -1,22 +1,28 @@
 package NEGOCIO;
 
 public class Laboratorio {
-    private String nombreLab;
+    private String disponible = "DISPONIBLE";
+    private String ocupado = "OCUPADO";
+    private String mantenimiento = "MANTENIMIENTO";
+    private int maxRecursos = 5;
+    private int maxCursos = 20;
+
     private String codigoLab;
+    private String nombreLab; 
     private String tipoLab;
     private int capacidadMax;
     private String estadoLab;
     private RecursoTecnologico[] myRecursosTecnologicos;
-    private Curso myCurso;
+    private Curso[] myCursos;
 
-    public Laboratorio(String nombreLab, String codigoLab, String tipoLab, int capacidadMax, String estadoLab, Curso myCurso) {
-        this.nombreLab = nombreLab;
+    public Laboratorio(String codigoLab, String nombreLab, String tipoLab, int capacidadMax) {
         this.codigoLab = codigoLab;
+        this.nombreLab = nombreLab;
         this.tipoLab = tipoLab;
         this.capacidadMax = capacidadMax;
-        this.estadoLab = estadoLab;
-        this.myRecursosTecnologicos = new RecursoTecnologico[5];
-        this.myCurso = myCurso;
+        this.estadoLab = disponible;
+        this.myRecursosTecnologicos = new RecursoTecnologico[maxRecursos];
+        this.myCursos = new Curso[maxCursos];
     }
 
     public String getNombreLab() {
@@ -59,14 +65,6 @@ public class Laboratorio {
         this.estadoLab = estadoLab;
     }
 
-    public Curso getMyCurso() {
-        return myCurso;
-    }
-
-    public void setMyCurso(Curso myCurso) {
-        this.myCurso = myCurso;
-    }
-
     @Override
     public String toString() {
         return "Nombre laboratorio = " + this.nombreLab + "\n" +
@@ -74,11 +72,17 @@ public class Laboratorio {
                "Tipo de laboratorio = " + this.tipoLab + "\n" + 
                "Capacidad máxima = " + this.capacidadMax + "\n" + 
                "Estado = " + this.estadoLab + "\n" +
-               "Curso = " + this.myCurso.getNombreCurso();
+               "Cursos programados = " + this.contarCursos();
     }
-    
-    
-    
-    
-    
+
+    //Metodo privado para contar los cursos del laboratorio
+    private int contarCursos() {
+        int total = 0;
+        for (int i = 0; i < this.myCursos.length; i++) {
+            if (this.myCursos[i] != null) {
+                total++;
+            }
+        }
+        return total;
+    }    
 }

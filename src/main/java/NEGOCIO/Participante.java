@@ -42,9 +42,5 @@ public class Participante extends Persona {
                "Procedencia = " + this.procedencia + "\n" +
                "Tipo de población: " + this.tipoPoblacion + "\n" +
                "Asociado a: " + this.vinculacion;
-    }
-
-    
-    
-    
+    }    
 }

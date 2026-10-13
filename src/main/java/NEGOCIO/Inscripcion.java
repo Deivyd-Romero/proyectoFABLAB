@@ -1,5 +1,10 @@
 package NEGOCIO;
 public class Inscripcion {
+    private String inscrito = "INSCRITO";
+    private String retirado = "RETIRADO";
+    private String aprobado = "APROBADO";
+    private String noAprobado = "NO_APROBADO";
+
     private int numInscripcion;
     private String fechaInscripcion;
     private double porcentajeAsistencia;
@@ -17,7 +22,7 @@ public class Inscripcion {
         this.myCurso = myCurso;
         this.porcentajeAsistencia = 0.0;
         this.notaFinal = 0.0;
-        this.estadoParticipante = "Inscrito";
+        this.estadoParticipante = inscrito;
         this.certificado = false;
         this.causaNoCertificado = "";
     }
@@ -105,14 +110,5 @@ public class Inscripcion {
                "Participante = " + this.myParticipante.getNombre() + "\n" +
                "Nombre del curso = " + this.myCurso.getNombreCurso() + "\n" +
                "Causa de la no certificación = " + this.causaNoCertificado;
-    }
-
-    
-    
-
-    
-    
-    
-    
-    
+    }    
 }
