@@ -9,7 +9,7 @@ public class Persona {
 
     public Persona() {
     }
-    
+
     public Persona(String nombre, String correo, String telefono, String documento) {
 
         this.nombre = nombre;
@@ -52,9 +52,9 @@ public class Persona {
 
     @Override
     public String toString() {
-        return  "Nombre = " + this.getNombre() + "\n" +
-                "Correo = " + this.getCorreo() + "\n" +
-                "Telefono = " + this.getTelefono() + "\n" +
-                "Identificacion = " + this.getDocumento();
+        return "Nombre = " + this.getNombre() + "\n"
+                + "Correo = " + this.getCorreo() + "\n"
+                + "Telefono = " + this.getTelefono() + "\n"
+                + "Identificacion = " + this.getDocumento();
     }
 }

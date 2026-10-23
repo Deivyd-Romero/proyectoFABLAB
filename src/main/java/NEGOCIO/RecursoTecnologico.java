@@ -1,6 +1,8 @@
 package NEGOCIO;
 
 public class RecursoTecnologico {
+
+    // Posibles valores del atributo estado
     private String disponible = "Disponible";
     private String enUso = "En uso";
     private String danado = "Dañado";
@@ -14,7 +16,7 @@ public class RecursoTecnologico {
     private String estado;
     private int cantidadDisponible;
     private int cantidadDaniada;
-    private int cantidadPerdidaAcumulada;
+    private int cantidadPerdidaAcumulada;   // unidades perdidas a lo largo del tiempo (se va sumando)
     private int cantidadEnUso;
 
     public RecursoTecnologico(String identificador, String descripcion, String tipoRecurso, int valorUnitario, int cantidadTotal) {
@@ -112,15 +114,15 @@ public class RecursoTecnologico {
 
     @Override
     public String toString() {
-        return "Identificador = " + this.identificador + "\n" + 
-                "Descripcion = " + this.descripcion + "\n" + 
-                "Tipo de Recurso = " + this.tipoRecurso + "\n" +
-                "Valor Unitario = " + this.valorUnitario + "\n" +
-                "Cantidad Total = " + this.cantidadTotal + "\n" +
-                "Estado = " + this.estado + "\n" +
-                "Cantidad Disponible = " + this.cantidadDisponible + "\n" +
-                "Cantidad En Uso = " + this.cantidadEnUso + "\n" +
-                "Cantidad Dañada = " + this.cantidadDaniada + "\n" +
-                "Cantidad Perdida Acumulada = " + this.cantidadPerdidaAcumulada;
-    }    
+        return "Identificador = " + this.identificador + "\n"
+                + "Descripcion = " + this.descripcion + "\n"
+                + "Tipo de Recurso = " + this.tipoRecurso + "\n"
+                + "Valor Unitario = " + this.valorUnitario + "\n"
+                + "Cantidad Total = " + this.cantidadTotal + "\n"
+                + "Estado = " + this.estado + "\n"
+                + "Cantidad Disponible = " + this.cantidadDisponible + "\n"
+                + "Cantidad En Uso = " + this.cantidadEnUso + "\n"
+                + "Cantidad Dañada = " + this.cantidadDaniada + "\n"
+                + "Cantidad Perdida Acumulada = " + this.cantidadPerdidaAcumulada;
+    }
 }

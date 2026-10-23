@@ -1,12 +1,15 @@
 package NEGOCIO;
 
+import java.util.*;
+
 public class Curso {
+
+    // Posibles valores del atributo estadoCurso
     private String programado = "PROGRAMADO";
     private String inscripcionesAbiertas = "INSCRIPCIONES_ABIERTAS";
     private String enFormacion = "EN_FORMACION";
     private String finalizado = "FINALIZADO";
     private String cancelado = "CANCELADO";
-    private int maxRecursos = 5;
 
     private String nombreCurso;
     private String areaTecnologica;
@@ -20,12 +23,11 @@ public class Curso {
     private String estadoCurso;
     private String codigo;
     private Persona myInstructor;
-    private Inscripcion [] myInscripciones;
-    private RecursoTecnologico [] myRecursosEntregados;
-    private int [] cantidadEntregada;
-    private int [] cantidadBuena;
-    private int [] cantidadDaniada;
-    private int [] cantidadPerdida;
+    
+    // Inscripciones del curso.
+    private ArrayList<Inscripcion> myInscripciones;
+    // Recursos que el curso se llevo: cada EntregaRecurso une este curso con un recurso
+    private ArrayList<EntregaRecurso> myEntregas;
 
     public Curso(String nombreCurso, String areaTecnologica, String fechaInicio, String fechaFin,
             String horarioInicio, String horarioFin, int cupoCurso, String poblacionObjetivo,
@@ -42,22 +44,19 @@ public class Curso {
         this.codigo = codigo;
         this.myInstructor = myInstructor;
         this.estadoCurso = programado;
-        this.myInscripciones = new Inscripcion[cupoCurso];
-        this.myRecursosEntregados = new RecursoTecnologico[maxRecursos];
-        this.cantidadEntregada = new int[maxRecursos];
-        this.cantidadBuena = new int[maxRecursos];
-        this.cantidadDaniada = new int[maxRecursos];
-        this.cantidadPerdida = new int[maxRecursos];
+        // Las listas empiezan vacias y crecen solas al agregar elementos
+        this.myInscripciones = new ArrayList<Inscripcion>();
+        this.myEntregas = new ArrayList<EntregaRecurso>();
     }
-    
-    public String getNombreCurso(){
+
+    public String getNombreCurso() {
         return nombreCurso;
     }
-    
-    public void setNombreCurso(String nombreCurso){
+
+    public void setNombreCurso(String nombreCurso) {
         this.nombreCurso = nombreCurso;
     }
-    
+
     public String getAreaTecnologica() {
         return areaTecnologica;
     }
@@ -145,20 +144,21 @@ public class Curso {
     public void setMyInstructor(Persona myInstructor) {
         this.myInstructor = myInstructor;
     }
-    
+
     @Override
     public String toString() {
-        return "Nombre del curso = " + this.nombreCurso + "\n" +
-                "Area Tecnologica = " + this.areaTecnologica + "\n" + 
-                "Fecha de inicio = " + this.fechaInicio + "\n" +
-                "Fecha de finalización = " + this.fechaFin + "\n" +
-                "Horario de inicio = " + this.horarioInicio + "\n" +
-                "Horario de finalización = " + this.horarioFin + "\n" +
-                "Cupos = " + this.cupoCurso + "\n" +
-                "Poblacion objetivo = " + this.poblacionObjetivo + "\n" + 
-                "Entidad solicitante = " + this.entidadSolicitante + "\n" +
-                "Estado del curso=" + this.estadoCurso + "\n" +
-                "Código = " + this.codigo + "\n" +
+        return "Nombre del curso = " + this.nombreCurso + "\n"
+                + "Area Tecnologica = " + this.areaTecnologica + "\n"
+                + "Fecha de inicio = " + this.fechaInicio + "\n"
+                + "Fecha de finalización = " + this.fechaFin + "\n"
+                + "Horario de inicio = " + this.horarioInicio + "\n"
+                + "Horario de finalización = " + this.horarioFin + "\n"
+                + "Cupos = " + this.cupoCurso + "\n"
+                + "Poblacion objetivo = " + this.poblacionObjetivo + "\n"
+                + "Entidad solicitante = " + this.entidadSolicitante + "\n"
+                + "Estado del curso=" + this.estadoCurso + "\n"
+                + "Código = " + this.codigo + "\n"
+                + //Si no hay instructor muestra "Sin asignar"
                 "Instructor = " + (this.myInstructor == null ? "Sin asignar" : this.myInstructor.getNombre());
-    }    
+    }
 }

@@ -1,6 +1,7 @@
 package NEGOCIO;
 
 public class Participante extends Persona {
+
     private String procedencia;
     private String tipoPoblacion;
     private String vinculacion;
@@ -38,9 +39,9 @@ public class Participante extends Persona {
 
     @Override
     public String toString() {
-        return super.toString()+ "\n" +
-               "Procedencia = " + this.procedencia + "\n" +
-               "Tipo de población: " + this.tipoPoblacion + "\n" +
-               "Asociado a: " + this.vinculacion;
-    }    
+        return super.toString() + "\n"
+                + "Procedencia = " + this.procedencia + "\n"
+                + "Tipo de población: " + this.tipoPoblacion + "\n"
+                + "Asociado a: " + this.vinculacion;
+    }
 }

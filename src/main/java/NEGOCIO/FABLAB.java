@@ -1,13 +1,14 @@
 package NEGOCIO;
 
-public class FABLAB {
-    private int numLaboratorios = 5;
-    private int maxPersonas = 100;
-    private int maxInscripciones = 200;
+import java.util.ArrayList;
 
-    private Laboratorio[] myLaboratorios;
-    private Persona[] myPersonas;
-    private Inscripcion[] myInscripciones;
+public class FABLAB {
+
+    private ArrayList<Laboratorio> myLaboratorios;
+    // Aqui van todas las personas (instructores y participantes)
+    private ArrayList<Persona> myPersonas;
+    // Todas las inscripciones del FABLAB (cada curso tambien guarda las suyas)
+    private ArrayList<Inscripcion> myInscripciones;
 
     /*
     Requerimiento 1 inicializar la operacion del FABLAB
@@ -17,12 +18,11 @@ public class FABLAB {
     Requerimiento 5 cerrar el curso y conciliar los recursos utilizados
     Requerimiento 6 finalizar la formacion y determinar la certificacion
     Requerimiento 7 consultas e informes de control
-    */
-
+     */
     public FABLAB() {
-        this.myLaboratorios = new Laboratorio[numLaboratorios];
-        this.myPersonas = new Persona[maxPersonas];
-        this.myInscripciones = new Inscripcion[maxInscripciones];
+        this.myLaboratorios = new ArrayList<Laboratorio>();
+        this.myPersonas = new ArrayList<Persona>();
+        this.myInscripciones = new ArrayList<Inscripcion>();
         this.crearLaboratorios();
         this.crearRecursos();
         this.crearUsuariosBase();
@@ -59,14 +59,15 @@ public class FABLAB {
         return "";
     }
 
-    //RF4 - los arreglos son paralelos: la cantidad solicitada de cada recurso esta en la misma posicion
-    public String iniciarCurso(String codigoCurso, String[] codigosRecursos, int[] cantidadesSolicitadas) {
+    //RF4 - las listas son paralelas: la cantidad solicitada de cada recurso esta en la misma posicion
+    //(Integer es la version "objeto" de int: las listas no aceptan tipos primitivos)
+    public String iniciarCurso(String codigoCurso, ArrayList<String> codigosRecursos, ArrayList<Integer> cantidadesSolicitadas) {
         return "";
     }
 
-    //RF5 - los arreglos son paralelos: la conciliacion de cada recurso esta en la misma posicion
-    public String cerrarCurso(String codigoCurso, String[] codigosRecursos, int[] cantidadesBuenas,
-            int[] cantidadesDaniadas, int[] cantidadesPerdidas) {
+    //RF5 - las listas son paralelas: la conciliacion de cada recurso esta en la misma posicion
+    public String cerrarCurso(String codigoCurso, ArrayList<String> codigosRecursos, ArrayList<Integer> cantidadesBuenas,
+            ArrayList<Integer> cantidadesDaniadas, ArrayList<Integer> cantidadesPerdidas) {
         return "";
     }
 

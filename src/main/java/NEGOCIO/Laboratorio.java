@@ -1,19 +1,21 @@
 package NEGOCIO;
 
+import java.util.ArrayList;
+
 public class Laboratorio {
+    // Posibles valores del atributo estadoLab
     private String disponible = "DISPONIBLE";
     private String ocupado = "OCUPADO";
     private String mantenimiento = "MANTENIMIENTO";
-    private int maxRecursos = 5;
-    private int maxCursos = 20;
 
     private String codigoLab;
     private String nombreLab; 
     private String tipoLab;
     private int capacidadMax;
     private String estadoLab;
-    private RecursoTecnologico[] myRecursosTecnologicos;
-    private Curso[] myCursos;
+    // Recursos que pertenecen al laboratorio y cursos que se programan en el
+    private ArrayList<RecursoTecnologico> myRecursosTecnologicos;
+    private ArrayList<Curso> myCursos;
 
     public Laboratorio(String codigoLab, String nombreLab, String tipoLab, int capacidadMax) {
         this.codigoLab = codigoLab;
@@ -21,8 +23,8 @@ public class Laboratorio {
         this.tipoLab = tipoLab;
         this.capacidadMax = capacidadMax;
         this.estadoLab = disponible;
-        this.myRecursosTecnologicos = new RecursoTecnologico[maxRecursos];
-        this.myCursos = new Curso[maxCursos];
+        this.myRecursosTecnologicos = new ArrayList<RecursoTecnologico>();
+        this.myCursos = new ArrayList<Curso>();
     }
 
     public String getNombreLab() {
@@ -72,17 +74,6 @@ public class Laboratorio {
                "Tipo de laboratorio = " + this.tipoLab + "\n" + 
                "Capacidad máxima = " + this.capacidadMax + "\n" + 
                "Estado = " + this.estadoLab + "\n" +
-               "Cursos programados = " + this.contarCursos();
+               "Cursos programados = " + this.myCursos.size();   // size() = cantidad de cursos
     }
-
-    //Metodo privado para contar los cursos del laboratorio
-    private int contarCursos() {
-        int total = 0;
-        for (int i = 0; i < this.myCursos.length; i++) {
-            if (this.myCursos[i] != null) {
-                total++;
-            }
-        }
-        return total;
-    }    
 }

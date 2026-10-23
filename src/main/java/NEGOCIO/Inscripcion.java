@@ -1,5 +1,8 @@
 package NEGOCIO;
+
 public class Inscripcion {
+
+    // Posibles valores del atributo estadoParticipante
     private String inscrito = "INSCRITO";
     private String retirado = "RETIRADO";
     private String aprobado = "APROBADO";
@@ -10,10 +13,10 @@ public class Inscripcion {
     private double porcentajeAsistencia;
     private double notaFinal;
     private String estadoParticipante;
-    private boolean certificado;
+    private boolean certificado;   // true = el participante cumplio asistencia y nota para certificarse
     private Participante myParticipante;
     private Curso myCurso;
-    private String causaNoCertificado;
+    private String causaNoCertificado;   // si no se certifico, aqui se guarda el motivo
 
     public Inscripcion(int numInscripcion, String fechaInscripcion, Participante myParticipante, Curso myCurso) {
         this.numInscripcion = numInscripcion;
@@ -101,14 +104,14 @@ public class Inscripcion {
 
     @Override
     public String toString() {
-        return "Numero de Inscripcion = " + this.numInscripcion + "\n" + 
-               "Fecha de inscripción = " + this.fechaInscripcion + "\n" +
-               "Porcentaje de asistencia = " + this.porcentajeAsistencia + "\n" +
-               "Nota final = " + this.notaFinal + "\n" +
-               "Estado del participante = " + this.estadoParticipante + "\n" +
-               "Certificado = " + this.certificado + "\n" +
-               "Participante = " + this.myParticipante.getNombre() + "\n" +
-               "Nombre del curso = " + this.myCurso.getNombreCurso() + "\n" +
-               "Causa de la no certificación = " + this.causaNoCertificado;
-    }    
+        return "Numero de Inscripcion = " + this.numInscripcion + "\n"
+                + "Fecha de inscripción = " + this.fechaInscripcion + "\n"
+                + "Porcentaje de asistencia = " + this.porcentajeAsistencia + "\n"
+                + "Nota final = " + this.notaFinal + "\n"
+                + "Estado del participante = " + this.estadoParticipante + "\n"
+                + "Certificado = " + this.certificado + "\n"
+                + "Participante = " + this.myParticipante.getNombre() + "\n"
+                + "Nombre del curso = " + this.myCurso.getNombreCurso() + "\n"
+                + "Causa de la no certificación = " + this.causaNoCertificado;
+    }
 }
