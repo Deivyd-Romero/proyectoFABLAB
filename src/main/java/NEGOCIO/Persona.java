@@ -6,16 +6,18 @@ public class Persona {
     private String correo;
     private String telefono;
     private String documento;
+    private String rol;
 
     public Persona() {
     }
 
-    public Persona(String nombre, String correo, String telefono, String documento) {
+    public Persona(String nombre, String correo, String telefono, String documento, String rol) {
 
         this.nombre = nombre;
         this.correo = correo;
         this.telefono = telefono;
         this.documento = documento;
+        this.rol = rol;
     }
 
     public String getNombre() {
@@ -50,11 +52,19 @@ public class Persona {
         this.documento = documento;
     }
 
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
     @Override
     public String toString() {
         return "Nombre = " + this.getNombre() + "\n"
                 + "Correo = " + this.getCorreo() + "\n"
                 + "Telefono = " + this.getTelefono() + "\n"
-                + "Identificacion = " + this.getDocumento();
+                + "Identificacion = " + this.getDocumento() + "\n"
+                + "Rol = " + this.getRol();
     }
 }

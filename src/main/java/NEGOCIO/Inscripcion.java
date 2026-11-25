@@ -3,10 +3,10 @@ package NEGOCIO;
 public class Inscripcion {
 
     // Posibles valores del atributo estadoParticipante
-    private String inscrito = "INSCRITO";
-    private String retirado = "RETIRADO";
-    private String aprobado = "APROBADO";
-    private String noAprobado = "NO_APROBADO";
+    public static final String INSCRITO = "INSCRITO";
+    public static final String RETIRADO = "RETIRADO";
+    public static final String APROBADO = "APROBADO";
+    public static final String NO_APROBADO = "NO_APROBADO";
 
     private int numInscripcion;
     private String fechaInscripcion;
@@ -25,7 +25,7 @@ public class Inscripcion {
         this.myCurso = myCurso;
         this.porcentajeAsistencia = 0.0;
         this.notaFinal = 0.0;
-        this.estadoParticipante = inscrito;
+        this.estadoParticipante = INSCRITO;
         this.certificado = false;
         this.causaNoCertificado = "";
     }

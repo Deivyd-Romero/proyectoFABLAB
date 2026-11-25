@@ -18,6 +18,88 @@ public class FormIniciarCurso extends javax.swing.JFrame {
     public FormIniciarCurso(FormFABLAB myP) {
         initComponents();
         this.myFormPrincipal = myP;
+        cargarCursos();
+        cmbCurso.addActionListener(e -> cargarRecursos());
+        cmdIniciarCurso.addActionListener(e -> iniciarCurso());
+    }
+
+    /** Carga los cursos disponibles para iniciar desde la capa de negocio. */
+    private void cargarCursos() {
+        cmbCurso.removeAllItems();
+        String cursos = myFormPrincipal.getMyFablab().listarCursosParaIniciar();
+        for (String curso : cursos.split("/")) {
+            if (!curso.trim().isEmpty()) {
+                cmbCurso.addItem(curso);
+            }
+        }
+        if (cmbCurso.getItemCount() == 0) {
+            cmbCurso.addItem("<NO HAY CURSOS PROGRAMADOS>");
+            cmdIniciarCurso.setEnabled(false);
+        } else {
+            cmdIniciarCurso.setEnabled(true);
+        }
+        cargarRecursos();
+    }
+
+    /** Muestra los recursos del laboratorio y permite escribir las cantidades. */
+    private void cargarRecursos() {
+        javax.swing.table.DefaultTableModel modelo =
+                (javax.swing.table.DefaultTableModel) tblRecursos.getModel();
+        modelo.setRowCount(0);
+        Object seleccionado = cmbCurso.getSelectedItem();
+        if (seleccionado == null || seleccionado.toString().startsWith("<")) {
+            return;
+        }
+        String codigoCurso = seleccionado.toString().split(" - ", 2)[0].trim();
+        String datos = myFormPrincipal.getMyFablab().listarRecursosCurso(codigoCurso);
+        for (String fila : datos.split("/")) {
+            if (!fila.trim().isEmpty()) {
+                String[] campos = fila.split("\\|", -1);
+                modelo.addRow(new Object[]{campos[0], campos[1],
+                    Integer.parseInt(campos[2]), 0});
+            }
+        }
+    }
+
+    /** Recoge la tabla y solicita al negocio la entrega e inicio del curso. */
+    private void iniciarCurso() {
+        Object seleccionado = cmbCurso.getSelectedItem();
+        if (seleccionado == null || seleccionado.toString().startsWith("<")) {
+            Ventana.imp("No hay un curso seleccionado.", "Sistema");
+            return;
+        }
+        try {
+            tblRecursos.getCellEditor().stopCellEditing();
+        } catch (Exception ex) {
+            // No había una celda en edición.
+        }
+        javax.swing.table.DefaultTableModel modelo =
+                (javax.swing.table.DefaultTableModel) tblRecursos.getModel();
+        java.util.ArrayList<String> codigos = new java.util.ArrayList<>();
+        java.util.ArrayList<Integer> cantidades = new java.util.ArrayList<>();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            Object valor = modelo.getValueAt(i, 3);
+            int cantidad;
+            try {
+                cantidad = valor == null || valor.toString().trim().isEmpty()
+                        ? 0 : Integer.parseInt(valor.toString().trim());
+            } catch (NumberFormatException ex) {
+                Ventana.imp("Ingrese una cantidad entera válida para cada recurso.", "Sistema");
+                return;
+            }
+            if (cantidad > 0) {
+                codigos.add(modelo.getValueAt(i, 0).toString());
+                cantidades.add(cantidad);
+            }
+        }
+        String respuesta = myFormPrincipal.getMyFablab().iniciarCurso(
+                seleccionado.toString().split(" - ", 2)[0].trim(), codigos, cantidades);
+        Ventana.imp(respuesta, "Sistema");
+        if (respuesta.startsWith("INICIO DE CURSO:")) {
+            cargarCursos();
+        } else {
+            cargarRecursos();
+        }
     }
 
     /**

@@ -1,42 +1,28 @@
 package NEGOCIO;
 
-/*
- Clase asociacion entre Curso y RecursoTecnologico.
- Cada objeto guarda lo que UN curso se llevo de UN recurso:
- cuantas unidades se entregaron y como volvieron (buenas, daniadas o perdidas).
-*/
+/**
+ * Registra la cantidad de un recurso tecnológico entregada a un curso.
+ * La relación con el curso es unidireccional: Curso contiene sus entregas,
+ * por eso esta clase no guarda referencias a Curso ni a Laboratorio.
+ */
 public class EntregaRecurso {
-    private Curso myCurso;
-    private RecursoTecnologico myRecurso;
+    private final String codigoRecurso;
     private int cantidadEntregada;
-    // Las tres cantidades siguientes se llenan al cerrar el curso (RF5), por eso empiezan en 0
+    // Estas cantidades se registran al cerrar el curso (RF5).
     private int cantidadBuena;
     private int cantidadDaniada;
     private int cantidadPerdida;
 
-    public EntregaRecurso(Curso myCurso, RecursoTecnologico myRecurso, int cantidadEntregada) {
-        this.myCurso = myCurso;
-        this.myRecurso = myRecurso;
+    public EntregaRecurso(String codigoRecurso, int cantidadEntregada) {
+        this.codigoRecurso = codigoRecurso;
         this.cantidadEntregada = cantidadEntregada;
         this.cantidadBuena = 0;
         this.cantidadDaniada = 0;
         this.cantidadPerdida = 0;
     }
 
-    public Curso getMyCurso() {
-        return myCurso;
-    }
-
-    public void setMyCurso(Curso myCurso) {
-        this.myCurso = myCurso;
-    }
-
-    public RecursoTecnologico getMyRecurso() {
-        return myRecurso;
-    }
-
-    public void setMyRecurso(RecursoTecnologico myRecurso) {
-        this.myRecurso = myRecurso;
+    public String getCodigoRecurso() {
+        return codigoRecurso;
     }
 
     public int getCantidadEntregada() {
@@ -73,9 +59,7 @@ public class EntregaRecurso {
 
     @Override
     public String toString() {
-        // Solo se muestra el nombre del curso y el identificador del recurso (no los objetos completos)
-        return "Curso = " + this.myCurso.getNombreCurso() + "\n" +
-               "Recurso = " + this.myRecurso.getIdentificador() + "\n" +
+        return "Recurso = " + this.codigoRecurso + "\n" +
                "Cantidad entregada = " + this.cantidadEntregada + "\n" +
                "Cantidad buena = " + this.cantidadBuena + "\n" +
                "Cantidad dañada = " + this.cantidadDaniada + "\n" +

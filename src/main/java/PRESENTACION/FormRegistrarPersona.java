@@ -9,16 +9,26 @@ package PRESENTACION;
  * @author hp
  */
 public class FormRegistrarPersona extends javax.swing.JFrame {
-    
-   private FormFABLAB myFormPrincipal;
+
+    private FormFABLAB myFormPrincipal;
+
     /**
      * Creates new form FormRegistarPersona
      */
-    public FormRegistrarPersona(FormFABLAB myP) {
+    public FormRegistrarPersona(FormFABLAB myP, String documento) {
         initComponents();
         this.myFormPrincipal = myP;
+        this.txtDocumento.setText(documento);
+        this.txtDocumento.setEnabled(false);
     }
 
+    public FormFABLAB getMyFormPrincipal() {
+        return myFormPrincipal;
+    }
+
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -40,7 +50,7 @@ public class FormRegistrarPersona extends javax.swing.JFrame {
         txtCorreo = new javax.swing.JTextField();
         cmbRol = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
-        cmdRegistarPersona = new javax.swing.JButton();
+        cmdRegistrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -63,12 +73,12 @@ public class FormRegistrarPersona extends javax.swing.JFrame {
 
         txtCorreo.addActionListener(this::txtCorreoActionPerformed);
 
-        cmbRol.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>" }));
+        cmbRol.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>", "INSTRUCTOR", "PARTICIPANTE" }));
 
         jLabel6.setText("ROL:");
 
-        cmdRegistarPersona.setText("REGISTAR");
-        cmdRegistarPersona.setEnabled(false);
+        cmdRegistrar.setText("REGISTRAR");
+        cmdRegistrar.addActionListener(this::cmdRegistrarActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -100,16 +110,13 @@ public class FormRegistrarPersona extends javax.swing.JFrame {
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(26, 26, 26))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(cmdRegistarPersona)
-                        .addGap(15, 15, 15))))
+                .addGap(0, 43, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cmdRegistrar)
+                    .addComponent(jLabel1))
+                .addGap(26, 26, 26))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,9 +139,9 @@ public class FormRegistrarPersona extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
-                .addComponent(cmdRegistarPersona)
-                .addGap(15, 15, 15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addComponent(cmdRegistrar)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -173,13 +180,35 @@ public class FormRegistrarPersona extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCorreoActionPerformed
 
+    private void cmdRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdRegistrarActionPerformed
+        String documento = this.txtDocumento.getText().trim();
+        String nombre = this.txtNombre.getText().trim();
+        String telefono = this.txtTelefono.getText().trim();
+        String correo = this.txtCorreo.getText().trim();
+        String rol = this.cmbRol.getSelectedItem().toString();
+
+        if (documento.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || correo.isEmpty()) {
+            Ventana.imp("Faltan campos por rellenar", "Sistema");
+            return;
+        }
+
+        if (this.cmbRol.getSelectedIndex() == 0) {
+            Ventana.imp("Debe seleccionar un rol", "Sistema");
+            return;
+        }
+        String cad = this.myFormPrincipal.getMyFablab().registrarPersona(documento, nombre, correo, telefono, rol);
+        Ventana.imp(cad, "Sistema");
+
+        this.dispose();
+    }//GEN-LAST:event_cmdRegistrarActionPerformed
+
     /**
      * @param args the command line arguments
      */
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cmbRol;
-    private javax.swing.JButton cmdRegistarPersona;
+    private javax.swing.JButton cmdRegistrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

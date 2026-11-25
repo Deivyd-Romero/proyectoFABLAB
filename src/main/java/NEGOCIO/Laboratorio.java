@@ -3,40 +3,64 @@ package NEGOCIO;
 import java.util.ArrayList;
 
 public class Laboratorio {
-    // Posibles valores del atributo estadoLab
-    private String disponible = "DISPONIBLE";
-    private String ocupado = "OCUPADO";
-    private String mantenimiento = "MANTENIMIENTO";
+
+    public static final String DISPONIBLE = "DISPONIBLE";
+    public static final String OCUPADO = "OCUPADO";
 
     private String codigoLab;
-    private String nombreLab; 
     private String tipoLab;
     private int capacidadMax;
     private String estadoLab;
-    // Recursos que pertenecen al laboratorio y cursos que se programan en el
     private ArrayList<RecursoTecnologico> myRecursosTecnologicos;
-    private ArrayList<Curso> myCursos;
 
-    public Laboratorio(String codigoLab, String nombreLab, String tipoLab, int capacidadMax) {
+    public Laboratorio(String codigoLab, String tipoLab, int capacidadMax, String estadoLab, ArrayList<RecursoTecnologico> myRecursosTecnologicos) {
         this.codigoLab = codigoLab;
-        this.nombreLab = nombreLab;
         this.tipoLab = tipoLab;
         this.capacidadMax = capacidadMax;
-        this.estadoLab = disponible;
-        this.myRecursosTecnologicos = new ArrayList<RecursoTecnologico>();
-        this.myCursos = new ArrayList<Curso>();
-    }
-
-    public String getNombreLab() {
-        return nombreLab;
-    }
-
-    public void setNombreLab(String nombreLab) {
-        this.nombreLab = nombreLab;
+        this.estadoLab = estadoLab;
+        this.myRecursosTecnologicos = myRecursosTecnologicos;
     }
 
     public String getCodigoLab() {
         return codigoLab;
+    }
+
+    public boolean agregarRecurso(RecursoTecnologico recurso) {
+
+        if (recurso == null) {
+            return false;
+        }
+
+        for (RecursoTecnologico r : myRecursosTecnologicos) {
+            if (r.getIdentificador().equals(recurso.getIdentificador())) {
+                return false;
+            }
+        }
+
+        myRecursosTecnologicos.add(recurso);
+        return true;
+    }
+
+    public RecursoTecnologico buscarRecurso(String codigo) {
+        for (RecursoTecnologico recurso : myRecursosTecnologicos) {
+            if (recurso.getIdentificador().equalsIgnoreCase(codigo)) {
+                return recurso;
+            }
+        }
+        return null;
+    }
+
+    /** Devuelve una copia de los recursos del laboratorio. */
+    public ArrayList<RecursoTecnologico> getRecursos() {
+        return new ArrayList<>(this.myRecursosTecnologicos);
+    }
+
+    public String listarRecursos() {
+        String cad = "";
+        for (RecursoTecnologico r : this.myRecursosTecnologicos) {
+            cad += r.toString() + "\n" + "===============" + "\n";
+        }
+        return cad;
     }
 
     public void setCodigoLab(String codigoLab) {
@@ -67,13 +91,16 @@ public class Laboratorio {
         this.estadoLab = estadoLab;
     }
 
+    public void setMyRecursosTecnologicos(ArrayList<RecursoTecnologico> myRecursosTecnologicos) {
+        this.myRecursosTecnologicos = myRecursosTecnologicos;
+    }
+
     @Override
     public String toString() {
-        return "Nombre laboratorio = " + this.nombreLab + "\n" +
-               "Codigo = " + this.codigoLab + "\n" + 
-               "Tipo de laboratorio = " + this.tipoLab + "\n" + 
-               "Capacidad máxima = " + this.capacidadMax + "\n" + 
-               "Estado = " + this.estadoLab + "\n" +
-               "Cursos programados = " + this.myCursos.size();   // size() = cantidad de cursos
+        return "Codigo = " + this.codigoLab + "\n"
+                + "Tipo de laboratorio = " + this.tipoLab + "\n"
+                + "Capacidad máxima = " + this.capacidadMax + "\n"
+                + "Estado = " + this.estadoLab + "\n"
+                + "Recursos Tecnológicos:"+"\n"+this.listarRecursos();
     }
 }

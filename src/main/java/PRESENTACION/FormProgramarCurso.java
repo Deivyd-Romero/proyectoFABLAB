@@ -4,20 +4,61 @@
  */
 package PRESENTACION;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 /**
  *
  * @author hp
  */
 public class FormProgramarCurso extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormProgramarCurso.class.getName());
+
+    private static final DateTimeFormatter FORMATO_FECHA
+            = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("H:mm");
+
     private FormFABLAB myFormPRincipal;
+
     /**
      * Creates new form FormProgramarCurso
      */
     public FormProgramarCurso(FormFABLAB myP) {
         initComponents();
         this.myFormPRincipal = myP;
+    }
+
+    private LocalDate[] leerFechas() {
+        try {
+            LocalDate inicio = LocalDate.parse(this.txtFechaInicio.getText().trim(), FORMATO_FECHA);
+            LocalDate fin = LocalDate.parse(this.txtFechaFinal.getText().trim(), FORMATO_FECHA);
+            if (inicio.isAfter(fin)) {
+                Ventana.imp("LA FECHA DE INICIO DEBE SER ANTES DE LA FECHA DE FINALIZACION", "SISTEMA...");
+                return null;
+            }
+            return new LocalDate[]{inicio, fin};
+        } catch (DateTimeParseException ex) {
+            Ventana.imp("FECHA NO VALIDA. USE EL FORMATO dd/mm/aaaa (POR EJEMPLO 25/12/2026)", "SISTEMA...");
+            return null;
+        }
+    }
+
+    private LocalTime[] leerHorarios() {
+        try {
+            LocalTime inicio = LocalTime.parse(this.txtHorarioInicio.getText().trim(), FORMATO_HORA);
+            LocalTime fin = LocalTime.parse(this.txtHorarioFin.getText().trim(), FORMATO_HORA);
+            if (!inicio.isBefore(fin)) {
+                Ventana.imp("LA HORA DE INICIO DEBE SER ANTES DE LA HORA DE FINALIZAR", "SISTEMA...");
+                return null;
+            }
+            return new LocalTime[]{inicio, fin};
+        } catch (DateTimeParseException ex) {
+            Ventana.imp("HORA NO VALIDA. USE EL FORMATO hh:mm EN 24 HORAS (POR EJEMPLO 08:30)", "SISTEMA...");
+            return null;
+        }
     }
 
     /**
@@ -29,6 +70,8 @@ public class FormProgramarCurso extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -36,7 +79,7 @@ public class FormProgramarCurso extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         txtCodigoCurso = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        txtHoraInicio = new javax.swing.JTextField();
+        txtHorarioFin = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         txtFechaInicio = new javax.swing.JTextField();
@@ -49,7 +92,21 @@ public class FormProgramarCurso extends javax.swing.JFrame {
         txtCupoMax = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         cmbPoblacionObjetivo = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        cmdProgramarCurso = new javax.swing.JButton();
+        txtHorarioInicio = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        cmbAreatecnologica = new javax.swing.JComboBox<>();
+        jLabel13 = new javax.swing.JLabel();
+        cmbEntidadSolicitante = new javax.swing.JComboBox<>();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtNombreEntidadExterna = new javax.swing.JTextPane();
+        cmdVerificarInstructores = new javax.swing.JButton();
+        cmdVerificarLaboratorios = new javax.swing.JButton();
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -60,11 +117,11 @@ public class FormProgramarCurso extends javax.swing.JFrame {
 
         jLabel3.setText("CODIGO:");
 
-        jLabel4.setText("HORARIO (Inicio/Fin):");
+        jLabel4.setText("HORARIO (Inicio/Fin(hh:mm)):");
 
-        jLabel6.setText("FECHA INICIO (dd/mm/aa):");
+        jLabel6.setText("FECHA INICIO (dd/mm/aaaa):");
 
-        jLabel7.setText("FECHA FINAL (dd/mm/aa):");
+        jLabel7.setText("FECHA FINAL (dd/mm/aaaa):");
 
         txtFechaInicio.addActionListener(this::txtFechaInicioActionPerformed);
 
@@ -73,10 +130,29 @@ public class FormProgramarCurso extends javax.swing.JFrame {
         jLabel8.setText("LABORATORIO:");
 
         cmbLaboratorio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>" }));
+        cmbLaboratorio.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                cmbLaboratorioPopupMenuWillBecomeVisible(evt);
+            }
+        });
 
         jLabel9.setText("INSTRUCTOR:");
 
         cmbInstructor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>" }));
+        cmbInstructor.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                cmbInstructorPopupMenuWillBecomeVisible(evt);
+            }
+        });
+        cmbInstructor.addActionListener(this::cmbInstructorActionPerformed);
 
         jLabel10.setText("CUPO MAX:");
 
@@ -84,65 +160,113 @@ public class FormProgramarCurso extends javax.swing.JFrame {
 
         jLabel11.setText("POBLACION OBJETIVO:");
 
-        cmbPoblacionObjetivo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>", "General", "Vulnerable", "Empresa" }));
+        cmbPoblacionObjetivo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>", "General", "Vulnerable", "Empresarial" }));
 
-        jButton1.setText("PROGRAMAR");
-        jButton1.setEnabled(false);
+        cmdProgramarCurso.setText("PROGRAMAR");
+        cmdProgramarCurso.addActionListener(this::cmdProgramarCursoActionPerformed);
+
+        jLabel5.setText("/");
+
+        jLabel12.setText("AREA:");
+
+        cmbAreatecnologica.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>", "Drones", "Realidad Aumentada", "Impresión 3D", "Internet de las cosas (IoT)", "Contenidos digitales" }));
+
+        jLabel13.setText("ENTIDAD SOLICITANTE:");
+
+        cmbEntidadSolicitante.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>", "Comunidad UFPS", "Externa" }));
+        cmbEntidadSolicitante.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                cmbEntidadSolicitantePopupMenuWillBecomeVisible(evt);
+            }
+        });
+
+        jScrollPane2.setViewportView(txtNombreEntidadExterna);
+
+        cmdVerificarInstructores.setText("VERIFICAR INSTRUCTORES");
+        cmdVerificarInstructores.addActionListener(this::cmdVerificarInstructoresActionPerformed);
+
+        cmdVerificarLaboratorios.setText("VERIFICAR LABORATORIOS");
+        cmdVerificarLaboratorios.addActionListener(this::cmdVerificarLaboratoriosActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(30, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cmdProgramarCurso, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cmbAreatecnologica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(247, 247, 247)))
+                .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(0, 33, Short.MAX_VALUE)
+                .addGap(0, 48, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbPoblacionObjetivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtHoraInicio)
-                        .addGap(78, 78, 78))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCupoMax, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbPoblacionObjetivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel8)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cmbLaboratorio, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(4, 4, 4)
-                                        .addComponent(cmbInstructor, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel13)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCupoMax, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jLabel1))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCodigoCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNombreCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jScrollPane2)
+                                    .addComponent(cmbEntidadSolicitante, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(4, 4, 4)
+                            .addComponent(cmbInstructor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(cmdVerificarInstructores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel8)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cmbLaboratorio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(cmdVerificarLaboratorios)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtHorarioInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtHorarioFin, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCodigoCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNombreCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -155,11 +279,15 @@ public class FormProgramarCurso extends javax.swing.JFrame {
                     .addComponent(txtNombreCurso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(txtCodigoCurso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4)
-                    .addComponent(txtHoraInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(txtHorarioFin, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtHorarioInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(txtFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -167,32 +295,38 @@ public class FormProgramarCurso extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtFechaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(cmbLaboratorio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmdVerificarLaboratorios))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(cmbInstructor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmdVerificarInstructores))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(cmbAreatecnologica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(cmbLaboratorio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9)
-                            .addComponent(cmbInstructor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(txtCupoMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
                             .addComponent(cmbPoblacionObjetivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
-                .addGap(49, 49, 49))
+                        .addGap(29, 29, 29)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel13)
+                            .addComponent(cmbEntidadSolicitante, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel10)
+                        .addComponent(txtCupoMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addComponent(cmdProgramarCurso)
+                .addGap(19, 19, 19))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -200,16 +334,16 @@ public class FormProgramarCurso extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(39, 39, 39)
+                .addGap(30, 30, 30)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         pack();
@@ -227,32 +361,208 @@ public class FormProgramarCurso extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCupoMaxActionPerformed
 
+    private void cmdProgramarCursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdProgramarCursoActionPerformed
+        String codigoCurso = this.txtCodigoCurso.getText().trim();
+        String nombreCurso = this.txtNombreCurso.getText().trim();
+        String cupoMax = this.txtCupoMax.getText().trim();
+
+        if (codigoCurso.isEmpty() || nombreCurso.isEmpty() || cupoMax.isEmpty()
+                || this.txtHorarioInicio.getText().trim().isEmpty() || this.txtHorarioFin.getText().trim().isEmpty()
+                || this.txtFechaInicio.getText().trim().isEmpty() || this.txtFechaFinal.getText().trim().isEmpty()) {
+            Ventana.imp("FALTA INFORMACION, POR FAVOR RELLENE TODOS LOS CAMPOS...", "SISTEMA...");
+            return;
+        }
+        if (this.cmbInstructor.getSelectedIndex() <= 0 || this.cmbLaboratorio.getSelectedIndex() <= 0
+                || this.cmbPoblacionObjetivo.getSelectedIndex() <= 0 || this.cmbAreatecnologica.getSelectedIndex() <= 0
+                || this.cmbEntidadSolicitante.getSelectedIndex() <= 0) {
+            Ventana.imp("FALTA INFORMACION POR SELECCIONAR...", "SISTEMA...");
+            return;
+        }
+
+        String laboratorio = this.cmbLaboratorio.getSelectedItem().toString();
+        String instructor = this.cmbInstructor.getSelectedItem().toString();
+        String areaTecnologica = this.cmbAreatecnologica.getSelectedItem().toString();
+        String entidadSolicitante = this.cmbEntidadSolicitante.getSelectedItem().toString();
+        String poblacionObjetivo = this.cmbPoblacionObjetivo.getSelectedItem().toString();
+
+        if (entidadSolicitante.equals("Externa")) {
+            entidadSolicitante = this.txtNombreEntidadExterna.getText().trim();
+            if (entidadSolicitante.isEmpty()) {
+                Ventana.imp("ESCRIBA EL NOMBRE DE LA ENTIDAD EXTERNA...", "SISTEMA...");
+                return;
+            }
+        }
+
+        int cupo;
+        try {
+            cupo = Integer.parseInt(cupoMax);
+        } catch (NumberFormatException ex) {
+            Ventana.imp("EL CUPO DEBE SER UN NUMERO ENTERO", "SISTEMA...");
+            return;
+        }
+
+        LocalDate[] fechas = this.leerFechas();
+        if (fechas == null) {
+            return;
+        }
+        LocalTime[] horarios = this.leerHorarios();
+        if (horarios == null) {
+            return;
+        }
+
+        String cad = this.myFormPRincipal.getMyFablab().programarCurso(codigoCurso, nombreCurso,
+                fechas[0], fechas[1], horarios[0], horarios[1], cupo, poblacionObjetivo, laboratorio,
+                instructor, areaTecnologica, entidadSolicitante);
+        Ventana.imp(cad, "SISTEMA...");
+        
+        if (cad.startsWith("CURSO PROGRAMADO")) {
+            limpiarCampos();
+        }
+        
+    }//GEN-LAST:event_cmdProgramarCursoActionPerformed
+    
+    private void limpiarCampos() {
+
+    // Limpiar campos de texto
+    this.txtCodigoCurso.setText("");
+    this.txtNombreCurso.setText("");
+    this.txtCupoMax.setText("");
+    this.txtFechaInicio.setText("");
+    this.txtFechaFinal.setText("");
+    this.txtHorarioInicio.setText("");
+    this.txtHorarioFin.setText("");
+    this.txtNombreEntidadExterna.setText("");
+
+    // Reiniciar los ComboBox
+    this.cmbLaboratorio.setSelectedIndex(0);
+    this.cmbInstructor.setSelectedIndex(0);
+    this.cmbPoblacionObjetivo.setSelectedIndex(0);
+    this.cmbAreatecnologica.setSelectedIndex(0);
+    this.cmbEntidadSolicitante.setSelectedIndex(0);
+}
+    
+    private void cmbLaboratorioPopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_cmbLaboratorioPopupMenuWillBecomeVisible
+        // TODO add your handling code here:
+       
+
+      
+    }//GEN-LAST:event_cmbLaboratorioPopupMenuWillBecomeVisible
+
+    private void limpiarComboLaboratorio(){
+        this.cmbLaboratorio.removeAllItems();
+        this.cmbLaboratorio.addItem("<NO SELECCIONADO>"); 
+    }
+    
+    private void cmbInstructorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbInstructorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbInstructorActionPerformed
+
+    private void cmbInstructorPopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_cmbInstructorPopupMenuWillBecomeVisible
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_cmbInstructorPopupMenuWillBecomeVisible
+
+    private void cmbEntidadSolicitantePopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_cmbEntidadSolicitantePopupMenuWillBecomeVisible
+        // TODO add your handling code here:
+        
+        
+    }//GEN-LAST:event_cmbEntidadSolicitantePopupMenuWillBecomeVisible
+
+    private void cmdVerificarInstructoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdVerificarInstructoresActionPerformed
+        this.limpiarComboInstructor();
+
+        LocalDate[] fechas = this.leerFechas();
+        if (fechas == null) {
+            return;
+        }
+        LocalTime[] horarios = this.leerHorarios();
+        if (horarios == null) {
+            return;
+        }
+
+        String instructores = this.myFormPRincipal.getMyFablab().consultarInstructores(fechas[0], fechas[1],
+                horarios[0], horarios[1]);
+        if (instructores.isEmpty()) {
+            Ventana.imp("NO HAY INSTRUCTORES DISPONIBLES EN ESA FECHA Y HORARIO. SI AUN NO HAY INSTRUCTORES "
+                    + "REGISTRADOS, REGISTRELOS CON ROL INSTRUCTOR DESDE LA VENTANA DE INSCRIPCION DE PARTICIPANTES.",
+                    "SISTEMA...");
+            return;
+        }
+        for (String instructor : instructores.split("/")) {
+            if (!instructor.isEmpty()) {
+                this.cmbInstructor.addItem(instructor);
+            }
+        }
+    }//GEN-LAST:event_cmdVerificarInstructoresActionPerformed
+
+    private void cmdVerificarLaboratoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdVerificarLaboratoriosActionPerformed
+        this.limpiarComboLaboratorio();
+
+        LocalDate[] fechas = this.leerFechas();
+        if (fechas == null) {
+            return;
+        }
+        LocalTime[] horarios = this.leerHorarios();
+        if (horarios == null) {
+            return;
+        }
+
+        String laboratorios = this.myFormPRincipal.getMyFablab().consultarLaboratorios(fechas[0], fechas[1],
+                horarios[0], horarios[1]);
+        if (laboratorios.isEmpty()) {
+            Ventana.imp("NO HAY LABORATORIOS DISPONIBLES EN ESA FECHA Y HORARIO.", "SISTEMA...");
+            return;
+        }
+        for (String laboratorio : laboratorios.split("/")) {
+            if (!laboratorio.isEmpty()) {
+                this.cmbLaboratorio.addItem(laboratorio);
+            }
+        }
+    }//GEN-LAST:event_cmdVerificarLaboratoriosActionPerformed
+    
+    private void limpiarComboInstructor(){
+        this.cmbInstructor.removeAllItems();
+        this.cmbInstructor.addItem("<NO SELECCIONADO>"); 
+    }
+    
     /**
      * @param args the command line arguments
      */
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cmbAreatecnologica;
+    private javax.swing.JComboBox<String> cmbEntidadSolicitante;
     private javax.swing.JComboBox<String> cmbInstructor;
     private javax.swing.JComboBox<String> cmbLaboratorio;
     private javax.swing.JComboBox<String> cmbPoblacionObjetivo;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton cmdProgramarCurso;
+    private javax.swing.JButton cmdVerificarInstructores;
+    private javax.swing.JButton cmdVerificarLaboratorios;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField txtCodigoCurso;
     private javax.swing.JTextField txtCupoMax;
     private javax.swing.JTextField txtFechaFinal;
     private javax.swing.JTextField txtFechaInicio;
-    private javax.swing.JTextField txtHoraInicio;
+    private javax.swing.JTextField txtHorarioFin;
+    private javax.swing.JTextField txtHorarioInicio;
     private javax.swing.JTextField txtNombreCurso;
+    private javax.swing.JTextPane txtNombreEntidadExterna;
     // End of variables declaration//GEN-END:variables
 }

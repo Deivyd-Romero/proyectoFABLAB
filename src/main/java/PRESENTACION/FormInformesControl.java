@@ -162,6 +162,9 @@ public class FormInformesControl extends javax.swing.JFrame {
 
     private void cmdGenerarInventarioLab1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdGenerarInventarioLab1ActionPerformed
         // TODO add your handling code here:
+        this.txtInformes.setText("");
+        String cad = this.myFormPrincipal.getMyFablab().listarLaboratorios();
+        this.txtInformes.setText(cad);
     }//GEN-LAST:event_cmdGenerarInventarioLab1ActionPerformed
 
     /**
