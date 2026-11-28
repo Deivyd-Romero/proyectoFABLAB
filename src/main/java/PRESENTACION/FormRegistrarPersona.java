@@ -4,26 +4,24 @@
  */
 package PRESENTACION;
 
+import NEGOCIO.FABLAB;
+
 /**
  *
  * @author hp
  */
 public class FormRegistrarPersona extends javax.swing.JFrame {
 
-    private FormFABLAB myFormPrincipal;
+    private final FABLAB myFablab;
 
     /**
      * Creates new form FormRegistarPersona
      */
-    public FormRegistrarPersona(FormFABLAB myP, String documento) {
+    public FormRegistrarPersona(FABLAB fablab, String documento) {
         initComponents();
-        this.myFormPrincipal = myP;
+        this.myFablab = fablab;
         this.txtDocumento.setText(documento);
-        this.txtDocumento.setEnabled(false);
-    }
-
-    public FormFABLAB getMyFormPrincipal() {
-        return myFormPrincipal;
+        this.txtDocumento.setEditable(false);
     }
 
     
@@ -196,10 +194,12 @@ public class FormRegistrarPersona extends javax.swing.JFrame {
             Ventana.imp("Debe seleccionar un rol", "Sistema");
             return;
         }
-        String cad = this.myFormPrincipal.getMyFablab().registrarPersona(documento, nombre, correo, telefono, rol);
+        String cad = this.myFablab.registrarPersona(documento, nombre, correo, telefono, rol);
         Ventana.imp(cad, "Sistema");
 
-        this.dispose();
+        if (cad.startsWith("Se ha registrado correctamente")) {
+            this.dispose();
+        }
     }//GEN-LAST:event_cmdRegistrarActionPerformed
 
     /**

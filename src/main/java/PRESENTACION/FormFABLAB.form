@@ -72,7 +72,7 @@
                           <Component id="cmdIniciarCurso" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <Component id="cmdConsultarInventario" min="-2" max="-2" attributes="0"/>
+                          <Component id="cmdInformesControl" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="cmdFinalizarCertificar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -94,7 +94,7 @@
                   </Group>
                   <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="cmdConsultarInventario" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cmdInformesControl" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="cmdFinalizarCertificar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="cmdCerrarConciliar" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -128,12 +128,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdIniciarCursoActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="cmdConsultarInventario">
+        <Component class="javax.swing.JButton" name="cmdInformesControl">
           <Properties>
-            <Property name="text" type="java.lang.String" value="CONSULTAR INVENTARIO"/>
+            <Property name="text" type="java.lang.String" value="INFORMES DE CONTROL"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdConsultarInventarioActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdInformesControlActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="cmdFinalizarCertificar">

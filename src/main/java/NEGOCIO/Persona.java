@@ -1,17 +1,14 @@
 package NEGOCIO;
 
-public class Persona {
+public abstract class Persona {
 
     private String nombre;
     private String correo;
     private String telefono;
-    private String documento;
-    private String rol;
+    private final String documento;
+    private final String rol;
 
-    public Persona() {
-    }
-
-    public Persona(String nombre, String correo, String telefono, String documento, String rol) {
+    protected Persona(String nombre, String correo, String telefono, String documento, String rol) {
 
         this.nombre = nombre;
         this.correo = correo;
@@ -48,17 +45,10 @@ public class Persona {
         return documento;
     }
 
-    public void setDocumento(String documento) {
-        this.documento = documento;
-    }
-
     public String getRol() {
         return rol;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
-    }
     @Override
     public String toString() {
         return "Nombre = " + this.getNombre() + "\n"

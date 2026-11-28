@@ -1,5 +1,8 @@
 package NEGOCIO;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class Inscripcion {
 
     // Posibles valores del atributo estadoParticipante
@@ -8,25 +11,30 @@ public class Inscripcion {
     public static final String APROBADO = "APROBADO";
     public static final String NO_APROBADO = "NO_APROBADO";
 
-    private int numInscripcion;
-    private String fechaInscripcion;
+    private final int numInscripcion;
+    private final LocalDate fechaInscripcion;
     private double porcentajeAsistencia;
     private double notaFinal;
     private String estadoParticipante;
-    private boolean certificado;   // true = el participante cumplio asistencia y nota para certificarse
-    private Participante myParticipante;
-    private Curso myCurso;
+    private final Participante myParticipante;
     private String causaNoCertificado;   // si no se certifico, aqui se guarda el motivo
 
-    public Inscripcion(int numInscripcion, String fechaInscripcion, Participante myParticipante, Curso myCurso) {
+    // Datos que el participante declara EN ESTA inscripcion (pueden cambiar de un curso a otro)
+    private final String procedencia;
+    private final String tipoPoblacion;
+    private final String vinculacion;
+
+    public Inscripcion(int numInscripcion, LocalDate fechaInscripcion, Participante myParticipante,
+            String procedencia, String tipoPoblacion, String vinculacion) {
         this.numInscripcion = numInscripcion;
         this.fechaInscripcion = fechaInscripcion;
         this.myParticipante = myParticipante;
-        this.myCurso = myCurso;
+        this.procedencia = procedencia;
+        this.tipoPoblacion = tipoPoblacion;
+        this.vinculacion = vinculacion;
         this.porcentajeAsistencia = 0.0;
         this.notaFinal = 0.0;
         this.estadoParticipante = INSCRITO;
-        this.certificado = false;
         this.causaNoCertificado = "";
     }
 
@@ -34,84 +42,95 @@ public class Inscripcion {
         return numInscripcion;
     }
 
-    public void setNumInscripcion(int numInscripcion) {
-        this.numInscripcion = numInscripcion;
-    }
-
-    public String getFechaInscripcion() {
+    public LocalDate getFechaInscripcion() {
         return fechaInscripcion;
-    }
-
-    public void setFechaInscripcion(String fechaInscripcion) {
-        this.fechaInscripcion = fechaInscripcion;
     }
 
     public double getPorcentajeAsistencia() {
         return porcentajeAsistencia;
     }
 
-    public void setPorcentajeAsistencia(double porcentajeAsistencia) {
-        this.porcentajeAsistencia = porcentajeAsistencia;
-    }
-
     public double getNotaFinal() {
         return notaFinal;
-    }
-
-    public void setNotaFinal(double notaFinal) {
-        this.notaFinal = notaFinal;
     }
 
     public String getEstadoParticipante() {
         return estadoParticipante;
     }
 
-    public void setEstadoParticipante(String estadoParticipante) {
-        this.estadoParticipante = estadoParticipante;
+    public boolean retirar() {
+        if (!INSCRITO.equals(estadoParticipante)) {
+            return false;
+        }
+        estadoParticipante = RETIRADO;
+        return true;
     }
 
     public boolean isCertificado() {
-        return certificado;
-    }
-
-    public void setCertificado(boolean certificado) {
-        this.certificado = certificado;
+        return APROBADO.equals(estadoParticipante);
     }
 
     public Participante getMyParticipante() {
         return myParticipante;
     }
 
-    public void setMyParticipante(Participante myParticipante) {
-        this.myParticipante = myParticipante;
+    static String validarResultado(double asistencia, double nota) {
+        if (!(asistencia >= 0 && asistencia <= 100)) {
+            return "La asistencia debe estar entre 0 y 100.";
+        }
+        if (!(nota >= 0 && nota <= 5)) {
+            return "La nota final debe estar entre 0.0 y 5.0.";
+        }
+        return "";
     }
 
-    public Curso getMyCurso() {
-        return myCurso;
+    void registrarResultado(double asistencia, double nota) {
+        if (!INSCRITO.equals(estadoParticipante) || !validarResultado(asistencia, nota).isEmpty()) {
+            throw new IllegalStateException("El resultado no se puede registrar.");
+        }
+        porcentajeAsistencia = asistencia;
+        notaFinal = nota;
+        if (asistencia < 80) {
+            causaNoCertificado = "Asistencia insuficiente";
+        }
+        if (nota < 3.0) {
+            causaNoCertificado += (causaNoCertificado.isEmpty() ? "Nota" : " y nota") + " insuficiente";
+        }
+        estadoParticipante = causaNoCertificado.isEmpty() ? APROBADO : NO_APROBADO;
     }
 
-    public void setMyCurso(Curso myCurso) {
-        this.myCurso = myCurso;
+    public boolean isResultadoRegistrado() {
+        return APROBADO.equals(estadoParticipante) || NO_APROBADO.equals(estadoParticipante);
     }
 
     public String getCausaNoCertificado() {
         return causaNoCertificado;
     }
 
-    public void setCausaNoCertificado(String causaNoCertificado) {
-        this.causaNoCertificado = causaNoCertificado;
+    public String getProcedencia() {
+        return procedencia;
+    }
+
+    public String getTipoPoblacion() {
+        return tipoPoblacion;
+    }
+
+    public String getVinculacion() {
+        return vinculacion;
     }
 
     @Override
     public String toString() {
         return "Numero de Inscripcion = " + this.numInscripcion + "\n"
-                + "Fecha de inscripción = " + this.fechaInscripcion + "\n"
+                + "Fecha de inscripción = " + this.fechaInscripcion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n"
                 + "Porcentaje de asistencia = " + this.porcentajeAsistencia + "\n"
                 + "Nota final = " + this.notaFinal + "\n"
                 + "Estado del participante = " + this.estadoParticipante + "\n"
-                + "Certificado = " + this.certificado + "\n"
+                + "Certificado = " + isCertificado() + "\n"
                 + "Participante = " + this.myParticipante.getNombre() + "\n"
-                + "Nombre del curso = " + this.myCurso.getNombreCurso() + "\n"
+                + "Procedencia = " + this.procedencia + "\n"
+                + "Tipo de población = " + this.tipoPoblacion + "\n"
+                + "Vinculación = " + this.vinculacion + "\n"
                 + "Causa de la no certificación = " + this.causaNoCertificado;
     }
 }

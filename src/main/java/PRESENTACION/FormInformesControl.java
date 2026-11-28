@@ -4,20 +4,42 @@
  */
 package PRESENTACION;
 
+import NEGOCIO.FABLAB;
+
 /**
  *
  * @author hp
  */
 public class FormInformesControl extends javax.swing.JFrame {
-    
-    private FormFABLAB myFormPrincipal;
+
+    private final java.util.ArrayList<String> codigosCursos = new java.util.ArrayList<>();
+    private final java.util.ArrayList<String> codigosLabs = new java.util.ArrayList<>();
+    private final FABLAB myFablab;
 
     /**
      * Creates new form FormConsultarInventario
+     *
+     * @param fablab sistema compartido por las ventanas
      */
-    public FormInformesControl(FormFABLAB myP) {
+    public FormInformesControl(FABLAB fablab) {
         initComponents();
-        this.myFormPrincipal = myP;
+        this.myFablab = fablab;
+        cargarListas();
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowActivated(java.awt.event.WindowEvent evento) {
+                cargarListas();
+            }
+        });
+    }
+
+    private void cargarListas() {
+        String curso = Ventana.codigoSeleccionado(cmbCurso, codigosCursos);
+        String lab = Ventana.codigoSeleccionado(cmbLabs, codigosLabs);
+        Ventana.cargarOpciones(cmbCurso, codigosCursos, myFablab.listarTodosLosCursos());
+        Ventana.cargarOpciones(cmbLabs, codigosLabs, myFablab.listarLosLaboratorios());
+        cmbCurso.setSelectedIndex(Math.max(0, codigosCursos.indexOf(curso)));
+        cmbLabs.setSelectedIndex(Math.max(0, codigosLabs.indexOf(lab)));
     }
 
     /**
@@ -37,10 +59,10 @@ public class FormInformesControl extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         cmbCurso = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        cmbCurso1 = new javax.swing.JComboBox<>();
+        cmbLabs = new javax.swing.JComboBox<>();
         cmdGenerarInventarioLab = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        cmdGenerarInventarioLab1 = new javax.swing.JButton();
+        cmbGenerarInformeGeneral = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -49,7 +71,7 @@ public class FormInformesControl extends javax.swing.JFrame {
 
         txtInformes.setColumns(20);
         txtInformes.setRows(5);
-        txtInformes.setEnabled(false);
+        txtInformes.setEditable(false);
         jScrollPane1.setViewportView(txtInformes);
 
         cmdGenerarInformeCurso.setText("Generar");
@@ -61,15 +83,15 @@ public class FormInformesControl extends javax.swing.JFrame {
 
         jLabel3.setText("INFORME DEL INVENTARIO DEL LABORATORIO:");
 
-        cmbCurso1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>" }));
+        cmbLabs.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>" }));
 
         cmdGenerarInventarioLab.setText("Generar");
         cmdGenerarInventarioLab.addActionListener(this::cmdGenerarInventarioLabActionPerformed);
 
         jLabel4.setText("INFORME DEL FABLAB:");
 
-        cmdGenerarInventarioLab1.setText("Generar");
-        cmdGenerarInventarioLab1.addActionListener(this::cmdGenerarInventarioLab1ActionPerformed);
+        cmbGenerarInformeGeneral.setText("Generar");
+        cmbGenerarInformeGeneral.addActionListener(this::cmbGenerarInformeGeneralActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -85,9 +107,9 @@ public class FormInformesControl extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cmdGenerarInventarioLab1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cmbGenerarInformeGeneral, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(cmbCurso1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cmbLabs, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cmdGenerarInventarioLab, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
@@ -122,12 +144,12 @@ public class FormInformesControl extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cmbCurso1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbLabs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cmdGenerarInventarioLab))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(cmdGenerarInventarioLab1)))
+                            .addComponent(cmbGenerarInformeGeneral)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
@@ -154,30 +176,42 @@ public class FormInformesControl extends javax.swing.JFrame {
 
     private void cmdGenerarInformeCursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdGenerarInformeCursoActionPerformed
         // TODO add your handling code here:
+        this.txtInformes.setText("");
+        String codigo = Ventana.codigoSeleccionado(cmbCurso, codigosCursos);
+        if (codigo.isEmpty()) {
+            Ventana.imp("Seleccione un curso", "Sistema");
+            return;
+        }
+        this.txtInformes.setText(this.myFablab.informeCurso(codigo));
     }//GEN-LAST:event_cmdGenerarInformeCursoActionPerformed
 
     private void cmdGenerarInventarioLabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdGenerarInventarioLabActionPerformed
         // TODO add your handling code here:
+        this.txtInformes.setText("");
+        String codigoLab = Ventana.codigoSeleccionado(cmbLabs, codigosLabs);
+        if (codigoLab.isEmpty()) {
+            Ventana.imp("Seleccione un laboratorio.", "Sistema");
+            return;
+        }
+        txtInformes.setText(this.myFablab.informeInventario(codigoLab));
     }//GEN-LAST:event_cmdGenerarInventarioLabActionPerformed
 
-    private void cmdGenerarInventarioLab1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdGenerarInventarioLab1ActionPerformed
+    private void cmbGenerarInformeGeneralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbGenerarInformeGeneralActionPerformed
         // TODO add your handling code here:
-        this.txtInformes.setText("");
-        String cad = this.myFormPrincipal.getMyFablab().listarLaboratorios();
-        this.txtInformes.setText(cad);
-    }//GEN-LAST:event_cmdGenerarInventarioLab1ActionPerformed
+        this.txtInformes.setText(this.myFablab.informeConsolidado());
+
+    }//GEN-LAST:event_cmbGenerarInformeGeneralActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cmbCurso;
-    private javax.swing.JComboBox<String> cmbCurso1;
+    private javax.swing.JButton cmbGenerarInformeGeneral;
+    private javax.swing.JComboBox<String> cmbLabs;
     private javax.swing.JButton cmdGenerarInformeCurso;
     private javax.swing.JButton cmdGenerarInventarioLab;
-    private javax.swing.JButton cmdGenerarInventarioLab1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

@@ -4,6 +4,8 @@
  */
 package PRESENTACION;
 
+import NEGOCIO.FABLAB;
+
 /**
  *
  * @author hp
@@ -14,20 +16,22 @@ import NEGOCIO.Participante;
 
 public class FormInscripcionParticipante extends javax.swing.JFrame {
 
+    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     private static final String SIN_SELECCION = "<NO SELECCIONADO>";
 
-    private FormFABLAB myFormPrincipal;
+    private final java.util.ArrayList<String> codigosCursos = new java.util.ArrayList<>();
+    private final FABLAB myFablab;
 
     /**
      * Creates new form FormInscripcionParticiante
      */
-    public FormInscripcionParticipante(FormFABLAB myP) {
+    public FormInscripcionParticipante(FABLAB fablab) {
         initComponents();
-        this.myFormPrincipal = myP;
+        this.myFablab = fablab;
         this.numeroInscripciones();
         this.resetearFormulario();
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        this.txtFecha.setText(LocalDate.now().format(formato));
+        this.txtFecha.setText(LocalDate.now().format(FORMATO_FECHA));
         this.txtNumDocumento.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -46,18 +50,13 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
         });
     }
 
-    public FormFABLAB getMyFormPrincipal() {
-        return myFormPrincipal;
-    }
-
     private void numeroInscripciones() {
-        int numero = this.myFormPrincipal.getMyFablab().contadorInscripciones();
+        int numero = this.myFablab.contadorInscripciones();
         this.txtNumInscripcion.setText(Integer.toString(numero));
     }
 
     private String obtenerIdCurso() {
-        String curso = this.cmbCurso.getSelectedItem().toString();
-        return curso.split(" - ")[0];
+        return Ventana.codigoSeleccionado(cmbCurso, codigosCursos);
     }
 
     private void invalidarValidacion() {
@@ -72,7 +71,6 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
         this.txtNumDocumento.setText("");
         this.invalidarValidacion();
         this.txtCupos.setText("");
-        this.txtOtraComunidad.setText("");
         this.txtProcedencia.setText("");
         this.cmbVinculacion.setSelectedItem(SIN_SELECCION);
         this.cmbTipoPoblacion.setSelectedItem(SIN_SELECCION);
@@ -106,9 +104,7 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         txtCupos = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        txtOtraComunidad = new javax.swing.JTextField();
         cmbVinculacion = new javax.swing.JComboBox<>();
-        jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         txtProcedencia = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
@@ -125,7 +121,7 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
 
         jLabel2.setText("NO INSCRIPCION:");
 
-        txtNumInscripcion.setEnabled(false);
+        txtNumInscripcion.setEditable(false);
 
         jLabel3.setText("DOCUMENTO:");
 
@@ -139,14 +135,14 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
 
         jLabel5.setText("NOMBRE:");
 
-        txtNombre.setEnabled(false);
+        txtNombre.setEditable(false);
 
         jLabel6.setText("CORREO:");
 
-        txtCorreo.setEnabled(false);
+        txtCorreo.setEditable(false);
         txtCorreo.addActionListener(this::txtCorreoActionPerformed);
 
-        txtTelefono.setEnabled(false);
+        txtTelefono.setEditable(false);
         txtTelefono.addActionListener(this::txtTelefonoActionPerformed);
 
         jLabel7.setText("TELEFONO:");
@@ -156,15 +152,13 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
 
         jLabel8.setText("CUPOS:");
 
-        txtCupos.setEnabled(false);
+        txtCupos.setEditable(false);
 
         jLabel9.setText("VINCULACIÓN");
 
-        txtOtraComunidad.addActionListener(this::txtOtraComunidadActionPerformed);
 
         cmbVinculacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<NO SELECCIONADO>", "DOCENTE_UFPS", "ESTUDIANTE_UFPS", "EXTERNO" }));
 
-        jLabel10.setText("OTRA:");
 
         jLabel11.setText("PROCEDENCIA:");
 
@@ -183,14 +177,14 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
 
         jLabel13.setText("ROL:");
 
-        txtRol.setEnabled(false);
+        txtRol.setEditable(false);
 
         cmdComprobarCupos.setText("VALIDAR CUPOS");
         cmdComprobarCupos.addActionListener(this::cmdComprobarCuposActionPerformed);
 
         jLabel14.setText("FECHA:");
 
-        txtFecha.setEnabled(false);
+        txtFecha.setEditable(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -205,10 +199,6 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtOtraComunidad, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(84, 84, 84)
                                 .addComponent(jLabel1))
@@ -325,10 +315,6 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
                         .addComponent(cmbTipoPoblacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel8))
                     .addComponent(cmdComprobarCupos))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(txtOtraComunidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
@@ -376,51 +362,40 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
             Ventana.imp("Ingrese el documento a validar.", "Sistema");
             return;
         }
-        String existe = this.myFormPrincipal.getMyFablab().verificarPersonaExistente(documento);
+        String existe = this.myFablab.verificarPersonaExistente(documento);
         if (existe.isEmpty()) {
-            FormRegistrarPersona myRegistrar = new FormRegistrarPersona(myFormPrincipal, documento);
+            FormRegistrarPersona myRegistrar = new FormRegistrarPersona(myFablab, documento);
             myRegistrar.setVisible(true);
             return;
         }
-        String[] x = existe.split("/");
-        this.txtNombre.setText(x[0]);
-        this.txtCorreo.setText(x[1]);
-        this.txtTelefono.setText(x[2]);
-        this.txtRol.setText(x[3]);
-        if (!x[3].equalsIgnoreCase(Participante.ROL)) {
-            Ventana.imp("Esta persona está registrada como " + x[3] + " y solo los participantes pueden inscribirse.", "Sistema");
+        String[] datos = existe.split("/");
+        this.txtNombre.setText(FABLAB.leerCampoLista(datos[0]));
+        this.txtCorreo.setText(FABLAB.leerCampoLista(datos[1]));
+        this.txtTelefono.setText(FABLAB.leerCampoLista(datos[2]));
+        this.txtRol.setText(FABLAB.leerCampoLista(datos[3]));
+        if (!datos[3].equalsIgnoreCase(Participante.ROL)) {
+            Ventana.imp("Esta persona está registrada como " + datos[3] + " y solo los participantes pueden inscribirse.", "Sistema");
             this.cmdInscribir.setEnabled(false);
             return;
         }
         this.cmdInscribir.setEnabled(true);
     }//GEN-LAST:event_cmdValidarDocumentoActionPerformed
 
-    private void txtOtraComunidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtOtraComunidadActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtOtraComunidadActionPerformed
-
     private void txtProcedenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProcedenciaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProcedenciaActionPerformed
 
     private void cmdCursosDisponiblesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCursosDisponiblesActionPerformed
-        String cad = this.myFormPrincipal.getMyFablab().listarCursos();
-        this.cmbCurso.removeAllItems();
-        this.cmbCurso.addItem(SIN_SELECCION);
+        String cad = this.myFablab.listarCursos();
+        Ventana.cargarOpciones(cmbCurso, codigosCursos, cad);
         if (cad.isEmpty()) {
-            Ventana.imp("No hay cursos disponibles para inscripción", "Sistema");
-            return;
-        }
-        for (String curso : cad.split("/")) {
-            if (!curso.isEmpty()) {
-                this.cmbCurso.addItem(curso);
-            }
+            Ventana.imp("No hay cursos disponibles para inscripción.", "Sistema");
         }
     }//GEN-LAST:event_cmdCursosDisponiblesActionPerformed
 
     private void cmdInscribirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdInscribirActionPerformed
         String documento = this.txtNumDocumento.getText().trim();
-        String fechaInscripcion = this.txtFecha.getText();
+        LocalDate fechaInscripcion = LocalDate.parse(this.txtFecha.getText(), FORMATO_FECHA);
         String cupos = this.txtCupos.getText();
         String procedencia = this.txtProcedencia.getText().trim();
         String vinculacion = this.cmbVinculacion.getSelectedItem().toString();
@@ -448,12 +423,11 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
         }
 
         String idCurso = this.obtenerIdCurso();
-        int numeroAntes = this.myFormPrincipal.getMyFablab().contadorInscripciones();
-        String cad = this.myFormPrincipal.getMyFablab().realizarInscripcion(idCurso, fechaInscripcion,
+        String cad = this.myFablab.realizarInscripcion(idCurso, fechaInscripcion,
                 documento, procedencia, tipoPoblacion, vinculacion);
         Ventana.imp(cad, "Sistema");
 
-        if (this.myFormPrincipal.getMyFablab().contadorInscripciones() > numeroAntes) {
+        if (cad.startsWith("INSCRIPCIÓN EXITOSA")) {
             this.resetearFormulario();
             this.numeroInscripciones();
         }
@@ -464,7 +438,7 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
             Ventana.imp("Debe seleccionar un curso.", "Sistema");
             return;
         }
-        int cupoCurso = this.myFormPrincipal.getMyFablab().consultarCuposDisponibles(this.obtenerIdCurso());
+        int cupoCurso = this.myFablab.consultarCuposDisponibles(this.obtenerIdCurso());
         if (cupoCurso == 0) {
             Ventana.imp("No hay cupos disponibles.", "Sistema");
             this.cmbCurso.setSelectedIndex(0);
@@ -490,7 +464,6 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
     private javax.swing.JButton cmdInscribir;
     private javax.swing.JButton cmdValidarDocumento;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -510,7 +483,6 @@ public class FormInscripcionParticipante extends javax.swing.JFrame {
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtNumDocumento;
     private javax.swing.JTextField txtNumInscripcion;
-    private javax.swing.JTextField txtOtraComunidad;
     private javax.swing.JTextField txtProcedencia;
     private javax.swing.JTextField txtRol;
     private javax.swing.JTextField txtTelefono;

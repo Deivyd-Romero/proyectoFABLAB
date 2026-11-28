@@ -4,20 +4,99 @@
  */
 package PRESENTACION;
 
+import NEGOCIO.FABLAB;
+
 /**
  *
  * @author hp
  */
 public class FormFinalizarCertificar extends javax.swing.JFrame {
     
-    private FormFABLAB myFormPrincipal;
+    private final java.util.ArrayList<String> codigosCursos = new java.util.ArrayList<>();
+    private String participantesCargados = "";
+    private final FABLAB myFablab;
 
     /**
      * Creates new form FormFinalizarCertificar
      */
-    public FormFinalizarCertificar(FormFABLAB myP) {
+    public FormFinalizarCertificar(FABLAB fablab) {
         initComponents();
-        this.myFormPrincipal = myP;
+        this.myFablab = fablab;
+        prepararTabla();
+        cargarCursos();
+        cmbCurso.addActionListener(e -> cargarParticipantes());
+        // La quinta columna se usa internamente para no volver a procesar participantes.
+        tblNotasAsistencia.removeColumn(tblNotasAsistencia.getColumnModel().getColumn(4));
+    }
+
+    private void prepararTabla() {
+        tblNotasAsistencia.setModel(new javax.swing.table.DefaultTableModel(
+            new Object[0][5],
+            new String [] {
+                "PARTICIPANTE", "DOCUMENTO", "ASISTENCIA (%)", "NOTA", "PROCESADO"
+            }
+        ) {
+            Class<?>[] types = new Class<?>[] {
+                java.lang.String.class, java.lang.String.class, java.lang.Double.class,
+                java.lang.Double.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true, true, false
+            };
+
+            public Class<?> getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex] && !Boolean.TRUE.equals(getValueAt(rowIndex, 4));
+            }
+        });
+    }
+
+    private void cargarCursos() {
+        Ventana.cargarOpciones(cmbCurso, codigosCursos, myFablab.listarCursosParaCertificar());
+        cmdFinalizarCertificar.setEnabled(false);
+    }
+
+    private String obtenerCodigoCurso() {
+        return Ventana.codigoSeleccionado(cmbCurso, codigosCursos);
+    }
+
+    private void cargarParticipantes() {
+        javax.swing.table.DefaultTableModel modelo =
+                (javax.swing.table.DefaultTableModel) tblNotasAsistencia.getModel();
+        modelo.setRowCount(0);
+        txtReporteCertificado.setText("");
+        String codigo = obtenerCodigoCurso();
+        if (codigo.isEmpty()) {
+            cmdFinalizarCertificar.setEnabled(false);
+            return;
+        }
+
+        String participantes = myFablab
+                .listarParticipantesParaCertificar(codigo);
+        participantesCargados = participantes;
+        for (String registro : participantes.split("/")) {
+            if (registro.trim().isEmpty()) {
+                continue;
+            }
+            String[] datos = registro.split("\\|", -1);
+            if (datos.length >= 5) {
+                boolean procesado = Boolean.parseBoolean(datos[2]);
+                modelo.addRow(new Object[]{
+                    FABLAB.leerCampoLista(datos[1]), FABLAB.leerCampoLista(datos[0]),
+                    procesado ? Double.valueOf(datos[3]) : null,
+                    procesado ? Double.valueOf(datos[4]) : null,
+                    procesado
+                });
+            }
+        }
+        cmdFinalizarCertificar.setEnabled(true);
+        if (modelo.getRowCount() == 0) {
+            txtReporteCertificado.setText(
+                    "Este curso no tiene participantes activos por evaluar.");
+        }
     }
 
     /**
@@ -59,14 +138,14 @@ public class FormFinalizarCertificar extends javax.swing.JFrame {
                 "PARTICIPANTE", "ASISTENCIA (%)", "NOTA"
             }
         ) {
-            Class[] types = new Class [] {
+            Class<?>[] types = new Class<?>[] {
                 java.lang.Object.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
                 false, true, true
             };
 
-            public Class getColumnClass(int columnIndex) {
+            public Class<?> getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
@@ -78,7 +157,7 @@ public class FormFinalizarCertificar extends javax.swing.JFrame {
 
         txtReporteCertificado.setColumns(20);
         txtReporteCertificado.setRows(5);
-        txtReporteCertificado.setEnabled(false);
+        txtReporteCertificado.setEditable(false);
         jScrollPane2.setViewportView(txtReporteCertificado);
 
         cmdFinalizarCertificar.setText("FINALIZAR Y CERTIFICAR");
@@ -148,7 +227,59 @@ public class FormFinalizarCertificar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmdFinalizarCertificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdFinalizarCertificarActionPerformed
-        // TODO add your handling code here:
+        String codigo = obtenerCodigoCurso();
+        if (codigo.isEmpty()) {
+            Ventana.imp("Seleccione un curso.", "Sistema FABLAB");
+            return;
+        }
+
+        javax.swing.table.DefaultTableModel modelo =
+                (javax.swing.table.DefaultTableModel) tblNotasAsistencia.getModel();
+        if (tblNotasAsistencia.isEditing() && !tblNotasAsistencia.getCellEditor().stopCellEditing()) {
+            Ventana.imp("Revise el valor de la celda en edición.", "Sistema FABLAB");
+            return;
+        }
+        if (!myFablab.pendienteDeCertificacion(codigo)) {
+            cargarCursos();
+            Ventana.imp("El curso ya fue finalizado en otra ventana.", "Sistema FABLAB");
+            return;
+        }
+        if (!participantesCargados.equals(myFablab.listarParticipantesParaCertificar(codigo))) {
+            cargarParticipantes();
+            Ventana.imp("Los resultados cambiaron en otra ventana. Revise la tabla actualizada.", "Sistema FABLAB");
+            return;
+        }
+        java.util.ArrayList<String> documentos = new java.util.ArrayList<>();
+        java.util.ArrayList<Double> asistencias = new java.util.ArrayList<>();
+        java.util.ArrayList<Double> notas = new java.util.ArrayList<>();
+        for (int fila = 0; fila < modelo.getRowCount(); fila++) {
+            if (Boolean.TRUE.equals(modelo.getValueAt(fila, 4))) {
+                continue; // Ya tiene asistencia y nota registradas.
+            }
+            Object asistenciaObj = modelo.getValueAt(fila, 2);
+            Object notaObj = modelo.getValueAt(fila, 3);
+            if (asistenciaObj == null || notaObj == null
+                    || asistenciaObj.toString().trim().isEmpty()
+                    || notaObj.toString().trim().isEmpty()) {
+                Ventana.imp("Complete la asistencia y la nota de todos los participantes.", "Sistema FABLAB");
+                return;
+            }
+            try {
+                documentos.add(modelo.getValueAt(fila, 1).toString());
+                asistencias.add(Double.valueOf(asistenciaObj.toString()));
+                notas.add(Double.valueOf(notaObj.toString()));
+            } catch (NumberFormatException ex) {
+                Ventana.imp("La asistencia y la nota deben ser valores numéricos.", "Sistema FABLAB");
+                return;
+            }
+        }
+
+        String cierre = myFablab.finalizarCurso(codigo, documentos, asistencias, notas);
+        if (cierre.startsWith("CURSO: ")) {
+            cargarCursos();
+        }
+        txtReporteCertificado.setText(cierre);
+        Ventana.imp(cierre, "Sistema FABLAB");
     }//GEN-LAST:event_cmdFinalizarCertificarActionPerformed
 
     /**

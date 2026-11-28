@@ -57,10 +57,10 @@
                       <Group type="102" attributes="0">
                           <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="cmdGenerarInventarioLab1" min="-2" pref="72" max="-2" attributes="0"/>
+                          <Component id="cmbGenerarInformeGeneral" min="-2" pref="72" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="cmbCurso1" max="32767" attributes="0"/>
+                          <Component id="cmbLabs" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="cmdGenerarInventarioLab" min="-2" pref="72" max="-2" attributes="0"/>
                       </Group>
@@ -104,13 +104,13 @@
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="cmbCurso1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="cmbLabs" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="cmdGenerarInventarioLab" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="cmdGenerarInventarioLab1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="cmbGenerarInformeGeneral" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Component id="jScrollPane1" min="-2" pref="249" max="-2" attributes="0"/>
@@ -137,7 +137,7 @@
               <Properties>
                 <Property name="columns" type="int" value="20"/>
                 <Property name="rows" type="int" value="5"/>
-                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="editable" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -172,7 +172,7 @@
             <Property name="text" type="java.lang.String" value="INFORME DEL INVENTARIO DEL LABORATORIO:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="cmbCurso1">
+        <Component class="javax.swing.JComboBox" name="cmbLabs">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="1">
@@ -197,12 +197,12 @@
             <Property name="text" type="java.lang.String" value="INFORME DEL FABLAB:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="cmdGenerarInventarioLab1">
+        <Component class="javax.swing.JButton" name="cmbGenerarInformeGeneral">
           <Properties>
             <Property name="text" type="java.lang.String" value="Generar"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdGenerarInventarioLab1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbGenerarInformeGeneralActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

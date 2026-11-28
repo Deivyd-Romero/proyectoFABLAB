@@ -10,29 +10,32 @@ public class Curso {
     public static final String PROGRAMADO = "PROGRAMADO";
     public static final String INSCRIPCIONES_ABIERTAS = "INSCRIPCIONES_ABIERTAS";
     public static final String EN_FORMACION = "EN_FORMACION";
+    public static final String PENDIENTE_CERTIFICACION = "PENDIENTE_CERTIFICACION";
     public static final String FINALIZADO = "FINALIZADO";
     public static final String CANCELADO = "CANCELADO";
 
     public static final String GENERAL = "General";
     public static final String ENTIDAD_UFPS = "Comunidad UFPS";
 
-    private String nombreCurso;
-    private String areaTecnologica;
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-    private LocalTime horarioInicio;
-    private LocalTime horarioFin;
-    private int cupoCurso;
-    private String poblacionObjetivo;
-    private String entidadSolicitante;
+    private final String nombreCurso;
+    private final String areaTecnologica;
+    private final LocalDate fechaInicio;
+    private final LocalDate fechaFin;
+    private final LocalTime horarioInicio;
+    private final LocalTime horarioFin;
+    private final int cupoCurso;
+    private final String poblacionObjetivo;
+    private final String entidadSolicitante;
     private String estadoCurso;
-    private String codigo;
-    private Instructor myInstructor;
-    private int cantidadInscritos;
-    private Laboratorio myLaboratorio;
+    private final String codigo;
+    private final Instructor myInstructor;
+    private final Laboratorio myLaboratorio;
 
-    // Recursos que el curso se llevo: cada entrega identifica el laboratorio, el código y la cantidad
-    private ArrayList<EntregaRecurso> myEntregas;
+    // Recursos que el curso se llevo: cada EntregaRecurso une este curso con un recurso
+    private final ArrayList<EntregaRecurso> myEntregas;
+
+    // Inscripciones de este curso: de aqui sale la cantidad de inscritos (no se guarda aparte)
+    private final ArrayList<Inscripcion> myInscripciones;
 
     public Curso(String nombreCurso, String areaTecnologica, LocalDate fechaInicio, LocalDate fechaFin,
             LocalTime horarioInicio, LocalTime horarioFin, int cupoCurso, String poblacionObjetivo,
@@ -50,24 +53,49 @@ public class Curso {
         this.myLaboratorio = myLaboratorio;
         this.myInstructor = myInstructor;
         this.estadoCurso = PROGRAMADO;
-        this.cantidadInscritos = 0;
         this.myEntregas = new ArrayList<EntregaRecurso>();
+        this.myInscripciones = new ArrayList<Inscripcion>();
     }
 
     public boolean recibeInscripciones() {
         return PROGRAMADO.equals(this.estadoCurso) || INSCRIPCIONES_ABIERTAS.equals(this.estadoCurso);
     }
 
+    /** Cantidad de inscritos, calculada a partir de las inscripciones del curso. */
     public int getCantidadInscritos() {
-        return cantidadInscritos;
+        int activos = 0;
+        for (Inscripcion inscrito : myInscripciones) {
+            if (!Inscripcion.RETIRADO.equals(inscrito.getEstadoParticipante())) {
+                activos++;
+            }
+        }
+        return activos;
     }
 
-    public void setCantidadInscritos(int cantidadInscritos) {
-        this.cantidadInscritos = cantidadInscritos;
+    Inscripcion buscarInscripcion(String documento) {
+        if (documento != null) {
+            for (Inscripcion inscrito : myInscripciones) {
+                if (inscrito.getMyParticipante().getDocumento().equalsIgnoreCase(documento.strip())) {
+                    return inscrito;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Registra una inscripcion asociada a este curso. */
+    void agregarInscripcion(Inscripcion inscripcion) {
+        this.myInscripciones.add(inscripcion);
+        this.estadoCurso = INSCRIPCIONES_ABIERTAS;
+    }
+
+    /** Devuelve una copia de las inscripciones para evitar exponer la lista interna. */
+    public ArrayList<Inscripcion> getMyInscripciones() {
+        return new ArrayList<>(this.myInscripciones);
     }
     
     /** Registra una entrega de recursos asociada a este curso. */
-    public void agregarEntrega(EntregaRecurso entrega) {
+    void agregarEntrega(EntregaRecurso entrega) {
         this.myEntregas.add(entrega);
     }
 
@@ -80,104 +108,62 @@ public class Curso {
         return nombreCurso;
     }
 
-    public void setNombreCurso(String nombreCurso) {
-        this.nombreCurso = nombreCurso;
-    }
-
     public String getAreaTecnologica() {
         return areaTecnologica;
-    }
-
-    public void setAreaTecnologica(String areaTecnologica) {
-        this.areaTecnologica = areaTecnologica;
     }
 
     public LocalDate getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(LocalDate fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
     public LocalDate getFechaFin() {
         return fechaFin;
-    }
-
-    public void setFechaFin(LocalDate fechaFin) {
-        this.fechaFin = fechaFin;
     }
 
     public LocalTime getHorarioInicio() {
         return horarioInicio;
     }
 
-    public void setHorarioInicio(LocalTime horarioInicio) {
-        this.horarioInicio = horarioInicio;
-    }
-
     public LocalTime getHorarioFin() {
         return horarioFin;
-    }
-
-    public void setHorarioFin(LocalTime horarioFin) {
-        this.horarioFin = horarioFin;
     }
 
     public int getCupoCurso() {
         return cupoCurso;
     }
 
-    public void setCupoCurso(int cupoCurso) {
-        this.cupoCurso = cupoCurso;
-    }
-
     public String getEntidadSolicitante() {
         return entidadSolicitante;
-    }
-
-    public void setEntidadSolicitante(String entidadSolicitante) {
-        this.entidadSolicitante = entidadSolicitante;
     }
 
     public String getEstadoCurso() {
         return estadoCurso;
     }
 
-    public void setEstadoCurso(String estadoCurso) {
-        this.estadoCurso = estadoCurso;
+    void setEstadoCurso(String nuevoEstado) {
+        boolean permitido = (recibeInscripciones() && (EN_FORMACION.equals(nuevoEstado) || CANCELADO.equals(nuevoEstado)))
+                || (EN_FORMACION.equals(estadoCurso) && PENDIENTE_CERTIFICACION.equals(nuevoEstado))
+                || (PENDIENTE_CERTIFICACION.equals(estadoCurso) && FINALIZADO.equals(nuevoEstado));
+        if (!permitido) {
+            throw new IllegalStateException("El curso no puede pasar de " + estadoCurso + " a " + nuevoEstado);
+        }
+        this.estadoCurso = nuevoEstado;
     }
 
     public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
     public Laboratorio getMyLaboratorio() {
         return myLaboratorio;
-    }
-
-    public void setMyLaboratorio(Laboratorio myLaboratorio) {
-        this.myLaboratorio = myLaboratorio;
     }
 
     public Instructor getMyInstructor() {
         return myInstructor;
     }
 
-    public void setMyInstructor(Instructor myInstructor) {
-        this.myInstructor = myInstructor;
-    }
-
     public String getPoblacionObjetivo() {
         return poblacionObjetivo;
-    }
-
-    public void setPoblacionObjetivo(String poblacionObjetivo) {
-        this.poblacionObjetivo = poblacionObjetivo;
     }
 
     @Override

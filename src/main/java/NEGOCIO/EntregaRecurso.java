@@ -7,14 +7,17 @@ package NEGOCIO;
  */
 public class EntregaRecurso {
     private final String codigoRecurso;
-    private int cantidadEntregada;
+    private final int cantidadEntregada;
     // Estas cantidades se registran al cerrar el curso (RF5).
     private int cantidadBuena;
     private int cantidadDaniada;
     private int cantidadPerdida;
 
     public EntregaRecurso(String codigoRecurso, int cantidadEntregada) {
-        this.codigoRecurso = codigoRecurso;
+        if (codigoRecurso == null || codigoRecurso.isBlank() || cantidadEntregada <= 0) {
+            throw new IllegalArgumentException("La entrega requiere un código y una cantidad positiva.");
+        }
+        this.codigoRecurso = codigoRecurso.strip();
         this.cantidadEntregada = cantidadEntregada;
         this.cantidadBuena = 0;
         this.cantidadDaniada = 0;
@@ -29,32 +32,25 @@ public class EntregaRecurso {
         return cantidadEntregada;
     }
 
-    public void setCantidadEntregada(int cantidadEntregada) {
-        this.cantidadEntregada = cantidadEntregada;
-    }
-
     public int getCantidadBuena() {
         return cantidadBuena;
-    }
-
-    public void setCantidadBuena(int cantidadBuena) {
-        this.cantidadBuena = cantidadBuena;
     }
 
     public int getCantidadDaniada() {
         return cantidadDaniada;
     }
 
-    public void setCantidadDaniada(int cantidadDaniada) {
-        this.cantidadDaniada = cantidadDaniada;
-    }
-
     public int getCantidadPerdida() {
         return cantidadPerdida;
     }
 
-    public void setCantidadPerdida(int cantidadPerdida) {
-        this.cantidadPerdida = cantidadPerdida;
+    void registrarDevolucion(int buenas, int daniadas, int perdidas) {
+        if (buenas < 0 || daniadas < 0 || perdidas < 0 || (long) buenas + daniadas + perdidas != cantidadEntregada) {
+            throw new IllegalArgumentException("Las cantidades deben sumar el total entregado.");
+        }
+        cantidadBuena = buenas;
+        cantidadDaniada = daniadas;
+        cantidadPerdida = perdidas;
     }
 
     @Override

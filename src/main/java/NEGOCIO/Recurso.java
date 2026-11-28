@@ -1,20 +1,22 @@
 package NEGOCIO;
 
-public class RecursoTecnologico {
+public class Recurso {
 
-    private String identificador;
-    private String descripcion;
-    private String tipoRecurso;
-    private int valorUnitario;
-    private String estado;
+    private final String identificador;
+    private final String descripcion;
+    private final String tipoRecurso;
+    private final int valorUnitario;
     private int cantidadTotal;
     private int cantidadDisponible;
     private int cantidadEnUso;
     private int cantidadDaniada;
     private int cantidadPerdida;
 
-    public RecursoTecnologico(String identificador, String descripcion, String tipoRecurso, int cantidadTotal, int valorUnitario) {
-        this.identificador = identificador;
+    public Recurso(String identificador, String descripcion, String tipoRecurso, int cantidadTotal, int valorUnitario) {
+        if (identificador == null || identificador.isBlank() || cantidadTotal < 0 || valorUnitario < 0) {
+            throw new IllegalArgumentException("El recurso requiere un código y cantidades y valores no negativos.");
+        }
+        this.identificador = identificador.strip();
         this.descripcion = descripcion;
         this.tipoRecurso = tipoRecurso;
         this.valorUnitario = valorUnitario;
@@ -29,32 +31,16 @@ public class RecursoTecnologico {
         return identificador;
     }
 
-    public void setIdentificador(String identificador) {
-        this.identificador = identificador;
-    }
-
     public String getDescripcion() {
         return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
     }
 
     public String getTipoRecurso() {
         return tipoRecurso;
     }
 
-    public void setTipoRecurso(String tipoRecurso) {
-        this.tipoRecurso = tipoRecurso;
-    }
-
     public int getValorUnitario() {
         return valorUnitario;
-    }
-
-    public void setValorUnitario(int valorUnitario) {
-        this.valorUnitario = valorUnitario;
     }
 
     /** Unidades disponibles para nuevas entregas. */
@@ -93,7 +79,7 @@ public class RecursoTecnologico {
     /** Devuelve al inventario las unidades que estaban en uso. */
     public boolean conciliar(int buenas, int daniadas, int perdidas) {
         if (buenas < 0 || daniadas < 0 || perdidas < 0
-                || buenas + daniadas + perdidas > cantidadEnUso) {
+                || (long) buenas + daniadas + perdidas > cantidadEnUso) {
             return false;
         }
         int totalConciliado = buenas + daniadas + perdidas;
@@ -106,23 +92,23 @@ public class RecursoTecnologico {
     }
 
     public String getEstado() {
-        return estado;
+        if (cantidadDisponible > 0) {
+            return "DISPONIBLE";
+        }
+        if (cantidadEnUso > 0) {
+            return "EN USO";
+        }
+        return cantidadDaniada > 0 ? "DAÑADO" : "FUERA DE SERVICIO";
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    long calcularCostoDanio(int unidades) {
+        long valor = (long) unidades * valorUnitario;
+        // Separa pesos y residuo antes de multiplicar para evitar desbordar el long.
+        return (valor / 10) * 3 + (valor % 10) * 3 / 10;
     }
 
     public int getCantidadTotal() {
         return cantidadTotal;
-    }
-
-    public void setCantidadTotal(int cantidadTotal) {
-        int comprometidas = this.cantidadEnUso + this.cantidadDaniada + this.cantidadPerdida;
-        if (cantidadTotal >= comprometidas) {
-            this.cantidadTotal = cantidadTotal;
-            this.cantidadDisponible = cantidadTotal - comprometidas;
-        }
     }
 
     @Override
@@ -130,6 +116,7 @@ public class RecursoTecnologico {
         return "Identificador = " + this.identificador + "\n"
                 + "Descripcion = " + this.descripcion + "\n"
                 + "Tipo de Recurso = " + this.tipoRecurso + "\n"
-                + "Valor Unitario = " + this.valorUnitario;
+                + "Valor Unitario = " + this.valorUnitario + "\n"
+                + "Total = " + cantidadTotal + " | Disponibles = " + cantidadDisponible;
     }
 }

@@ -6,44 +6,58 @@ public class Laboratorio {
 
     public static final String DISPONIBLE = "DISPONIBLE";
     public static final String OCUPADO = "OCUPADO";
+    public static final String MANTENIMIENTO = "MANTENIMIENTO";
 
-    private String codigoLab;
-    private String tipoLab;
-    private int capacidadMax;
+    private final String codigoLab;
+    private final String tipoLab;
+    private final int capacidadMax;
     private String estadoLab;
-    private ArrayList<RecursoTecnologico> myRecursosTecnologicos;
+    private final ArrayList<Recurso> myRecursosTecnologicos;
 
-    public Laboratorio(String codigoLab, String tipoLab, int capacidadMax, String estadoLab, ArrayList<RecursoTecnologico> myRecursosTecnologicos) {
-        this.codigoLab = codigoLab;
-        this.tipoLab = tipoLab;
+    public Laboratorio(String codigoLab, String tipoLab, int capacidadMax, String estadoLab) {
+        if (codigoLab == null || codigoLab.isBlank() || tipoLab == null || tipoLab.isBlank() || capacidadMax <= 0) {
+            throw new IllegalArgumentException("El laboratorio requiere código, área y capacidad positiva.");
+        }
+        this.codigoLab = codigoLab.strip();
+        this.tipoLab = tipoLab.strip();
         this.capacidadMax = capacidadMax;
-        this.estadoLab = estadoLab;
-        this.myRecursosTecnologicos = myRecursosTecnologicos;
+        setEstadoLab(estadoLab);
+        this.myRecursosTecnologicos = new ArrayList<>();
+    }
+
+    public Laboratorio(String codigoLab, String tipoLab, int capacidadMax, String estadoLab,
+            ArrayList<Recurso> recursos) {
+        this(codigoLab, tipoLab, capacidadMax, estadoLab);
+        if (recursos == null) {
+            throw new IllegalArgumentException("Indique los recursos del laboratorio.");
+        }
+        for (Recurso recurso : recursos) {
+            if (!agregarRecurso(recurso)) {
+                throw new IllegalArgumentException("Recurso nulo o repetido en el laboratorio.");
+            }
+        }
     }
 
     public String getCodigoLab() {
         return codigoLab;
     }
 
-    public boolean agregarRecurso(RecursoTecnologico recurso) {
+    public boolean agregarRecurso(Recurso recurso) {
 
-        if (recurso == null) {
+        if (recurso == null || buscarRecurso(recurso.getIdentificador()) != null) {
             return false;
-        }
-
-        for (RecursoTecnologico r : myRecursosTecnologicos) {
-            if (r.getIdentificador().equals(recurso.getIdentificador())) {
-                return false;
-            }
         }
 
         myRecursosTecnologicos.add(recurso);
         return true;
     }
 
-    public RecursoTecnologico buscarRecurso(String codigo) {
-        for (RecursoTecnologico recurso : myRecursosTecnologicos) {
-            if (recurso.getIdentificador().equalsIgnoreCase(codigo)) {
+    public Recurso buscarRecurso(String codigo) {
+        if (codigo == null) {
+            return null;
+        }
+        for (Recurso recurso : myRecursosTecnologicos) {
+            if (recurso.getIdentificador().equalsIgnoreCase(codigo.strip())) {
                 return recurso;
             }
         }
@@ -51,36 +65,24 @@ public class Laboratorio {
     }
 
     /** Devuelve una copia de los recursos del laboratorio. */
-    public ArrayList<RecursoTecnologico> getRecursos() {
+    public ArrayList<Recurso> getRecursos() {
         return new ArrayList<>(this.myRecursosTecnologicos);
     }
 
     public String listarRecursos() {
         String cad = "";
-        for (RecursoTecnologico r : this.myRecursosTecnologicos) {
+        for (Recurso r : this.myRecursosTecnologicos) {
             cad += r.toString() + "\n" + "===============" + "\n";
         }
         return cad;
-    }
-
-    public void setCodigoLab(String codigoLab) {
-        this.codigoLab = codigoLab;
     }
 
     public String getTipoLab() {
         return tipoLab;
     }
 
-    public void setTipoLab(String tipoLab) {
-        this.tipoLab = tipoLab;
-    }
-
     public int getCapacidadMax() {
         return capacidadMax;
-    }
-
-    public void setCapacidadMax(int capacidadMax) {
-        this.capacidadMax = capacidadMax;
     }
 
     public String getEstadoLab() {
@@ -88,11 +90,10 @@ public class Laboratorio {
     }
 
     public void setEstadoLab(String estadoLab) {
+        if (!DISPONIBLE.equals(estadoLab) && !OCUPADO.equals(estadoLab) && !MANTENIMIENTO.equals(estadoLab)) {
+            throw new IllegalArgumentException("Estado de laboratorio inválido.");
+        }
         this.estadoLab = estadoLab;
-    }
-
-    public void setMyRecursosTecnologicos(ArrayList<RecursoTecnologico> myRecursosTecnologicos) {
-        this.myRecursosTecnologicos = myRecursosTecnologicos;
     }
 
     @Override

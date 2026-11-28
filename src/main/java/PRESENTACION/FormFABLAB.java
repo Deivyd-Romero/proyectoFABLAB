@@ -12,7 +12,7 @@ import NEGOCIO.FABLAB;
 public class FormFABLAB extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormFABLAB.class.getName());
-    private FABLAB myFablab;
+    private final FABLAB myFablab;
     /**
      * Creates new form FormRegistrar
      */
@@ -40,7 +40,7 @@ public class FormFABLAB extends javax.swing.JFrame {
         cmdInscripcionPersona = new javax.swing.JButton();
         cmdProgramarCurso = new javax.swing.JButton();
         cmdIniciarCurso = new javax.swing.JButton();
-        cmdConsultarInventario = new javax.swing.JButton();
+        cmdInformesControl = new javax.swing.JButton();
         cmdFinalizarCertificar = new javax.swing.JButton();
         cmdCerrarConciliar = new javax.swing.JButton();
 
@@ -58,8 +58,8 @@ public class FormFABLAB extends javax.swing.JFrame {
         cmdIniciarCurso.setText("INICIAR CURSO");
         cmdIniciarCurso.addActionListener(this::cmdIniciarCursoActionPerformed);
 
-        cmdConsultarInventario.setText("CONSULTAR INVENTARIO");
-        cmdConsultarInventario.addActionListener(this::cmdConsultarInventarioActionPerformed);
+        cmdInformesControl.setText("INFORMES DE CONTROL");
+        cmdInformesControl.addActionListener(this::cmdInformesControlActionPerformed);
 
         cmdFinalizarCertificar.setText("FINALIZAR Y CERTIFICAR");
         cmdFinalizarCertificar.addActionListener(this::cmdFinalizarCertificarActionPerformed);
@@ -81,7 +81,7 @@ public class FormFABLAB extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(cmdIniciarCurso))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(cmdConsultarInventario)
+                        .addComponent(cmdInformesControl)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cmdFinalizarCertificar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -98,7 +98,7 @@ public class FormFABLAB extends javax.swing.JFrame {
                     .addComponent(cmdIniciarCurso))
                 .addGap(41, 41, 41)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmdConsultarInventario)
+                    .addComponent(cmdInformesControl)
                     .addComponent(cmdFinalizarCertificar)
                     .addComponent(cmdCerrarConciliar))
                 .addContainerGap(82, Short.MAX_VALUE))
@@ -132,38 +132,38 @@ public class FormFABLAB extends javax.swing.JFrame {
 
     private void cmdInscripcionPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdInscripcionPersonaActionPerformed
         // TODO add your handling code here:
-        FormInscripcionParticipante myInscripcion = new FormInscripcionParticipante(this);
+        FormInscripcionParticipante myInscripcion = new FormInscripcionParticipante(myFablab);
         myInscripcion.setVisible(true);
     }//GEN-LAST:event_cmdInscripcionPersonaActionPerformed
 
     private void cmdProgramarCursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdProgramarCursoActionPerformed
         // TODO add your handling code here:
-        FormProgramarCurso myNewCurso = new FormProgramarCurso(this);
+        FormProgramarCurso myNewCurso = new FormProgramarCurso(myFablab);
         myNewCurso.setVisible(true);
         
     }//GEN-LAST:event_cmdProgramarCursoActionPerformed
 
     private void cmdIniciarCursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdIniciarCursoActionPerformed
         // TODO add your handling code here:
-        FormIniciarCurso myInCurso = new FormIniciarCurso(this);
+        FormIniciarCurso myInCurso = new FormIniciarCurso(myFablab);
         myInCurso.setVisible(true);
     }//GEN-LAST:event_cmdIniciarCursoActionPerformed
 
-    private void cmdConsultarInventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdConsultarInventarioActionPerformed
+    private void cmdInformesControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdInformesControlActionPerformed
         // TODO add your handling code here:
-        FormInformesControl myConsulta = new FormInformesControl(this);
+        FormInformesControl myConsulta = new FormInformesControl(myFablab);
         myConsulta.setVisible(true);
-    }//GEN-LAST:event_cmdConsultarInventarioActionPerformed
+    }//GEN-LAST:event_cmdInformesControlActionPerformed
 
     private void cmdFinalizarCertificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdFinalizarCertificarActionPerformed
         // TODO add your handling code here:
-        FormFinalizarCertificar myFinalizar = new FormFinalizarCertificar(this);
+        FormFinalizarCertificar myFinalizar = new FormFinalizarCertificar(myFablab);
         myFinalizar.setVisible(true);
     }//GEN-LAST:event_cmdFinalizarCertificarActionPerformed
 
     private void cmdCerrarConciliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCerrarConciliarActionPerformed
         // TODO add your handling code here:
-       FormCerrarConciliar myCerrar = new FormCerrarConciliar(this);
+       FormCerrarConciliar myCerrar = new FormCerrarConciliar(myFablab);
        myCerrar.setVisible(true);
     }//GEN-LAST:event_cmdCerrarConciliarActionPerformed
 
@@ -194,8 +194,8 @@ public class FormFABLAB extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cmdCerrarConciliar;
-    private javax.swing.JButton cmdConsultarInventario;
     private javax.swing.JButton cmdFinalizarCertificar;
+    private javax.swing.JButton cmdInformesControl;
     private javax.swing.JButton cmdIniciarCurso;
     private javax.swing.JButton cmdInscripcionPersona;
     private javax.swing.JButton cmdProgramarCurso;

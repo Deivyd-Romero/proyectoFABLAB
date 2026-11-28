@@ -4,6 +4,8 @@
  */
 package PRESENTACION;
 
+import NEGOCIO.FABLAB;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -19,16 +21,20 @@ public class FormProgramarCurso extends javax.swing.JFrame {
 
     private static final DateTimeFormatter FORMATO_FECHA
             = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
-    private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("H:mm");
+    private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("H:mm").withResolverStyle(ResolverStyle.STRICT);
 
-    private FormFABLAB myFormPRincipal;
+    private final java.util.ArrayList<String> documentosInstructores = new java.util.ArrayList<>();
+    private final FABLAB myFablab;
 
     /**
      * Creates new form FormProgramarCurso
      */
-    public FormProgramarCurso(FormFABLAB myP) {
+    public FormProgramarCurso(FABLAB fablab) {
         initComponents();
-        this.myFormPRincipal = myP;
+        this.myFablab = fablab;
+        txtNombreEntidadExterna.setEnabled(false);
+        cmbEntidadSolicitante.addActionListener(e ->
+                txtNombreEntidadExterna.setEnabled("Externa".equals(cmbEntidadSolicitante.getSelectedItem())));
     }
 
     private LocalDate[] leerFechas() {
@@ -36,7 +42,7 @@ public class FormProgramarCurso extends javax.swing.JFrame {
             LocalDate inicio = LocalDate.parse(this.txtFechaInicio.getText().trim(), FORMATO_FECHA);
             LocalDate fin = LocalDate.parse(this.txtFechaFinal.getText().trim(), FORMATO_FECHA);
             if (inicio.isAfter(fin)) {
-                Ventana.imp("LA FECHA DE INICIO DEBE SER ANTES DE LA FECHA DE FINALIZACION", "SISTEMA...");
+                Ventana.imp("LA FECHA DE INICIO NO PUEDE SER POSTERIOR A LA FECHA FINAL", "SISTEMA...");
                 return null;
             }
             return new LocalDate[]{inicio, fin};
@@ -380,7 +386,7 @@ public class FormProgramarCurso extends javax.swing.JFrame {
         }
 
         String laboratorio = this.cmbLaboratorio.getSelectedItem().toString();
-        String instructor = this.cmbInstructor.getSelectedItem().toString();
+        String instructor = Ventana.codigoSeleccionado(cmbInstructor, documentosInstructores);
         String areaTecnologica = this.cmbAreatecnologica.getSelectedItem().toString();
         String entidadSolicitante = this.cmbEntidadSolicitante.getSelectedItem().toString();
         String poblacionObjetivo = this.cmbPoblacionObjetivo.getSelectedItem().toString();
@@ -410,37 +416,12 @@ public class FormProgramarCurso extends javax.swing.JFrame {
             return;
         }
 
-        String cad = this.myFormPRincipal.getMyFablab().programarCurso(codigoCurso, nombreCurso,
+        String cad = this.myFablab.programarCurso(codigoCurso, nombreCurso,
                 fechas[0], fechas[1], horarios[0], horarios[1], cupo, poblacionObjetivo, laboratorio,
                 instructor, areaTecnologica, entidadSolicitante);
         Ventana.imp(cad, "SISTEMA...");
-        
-        if (cad.startsWith("CURSO PROGRAMADO")) {
-            limpiarCampos();
-        }
-        
     }//GEN-LAST:event_cmdProgramarCursoActionPerformed
-    
-    private void limpiarCampos() {
 
-    // Limpiar campos de texto
-    this.txtCodigoCurso.setText("");
-    this.txtNombreCurso.setText("");
-    this.txtCupoMax.setText("");
-    this.txtFechaInicio.setText("");
-    this.txtFechaFinal.setText("");
-    this.txtHorarioInicio.setText("");
-    this.txtHorarioFin.setText("");
-    this.txtNombreEntidadExterna.setText("");
-
-    // Reiniciar los ComboBox
-    this.cmbLaboratorio.setSelectedIndex(0);
-    this.cmbInstructor.setSelectedIndex(0);
-    this.cmbPoblacionObjetivo.setSelectedIndex(0);
-    this.cmbAreatecnologica.setSelectedIndex(0);
-    this.cmbEntidadSolicitante.setSelectedIndex(0);
-}
-    
     private void cmbLaboratorioPopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_cmbLaboratorioPopupMenuWillBecomeVisible
         // TODO add your handling code here:
        
@@ -480,7 +461,7 @@ public class FormProgramarCurso extends javax.swing.JFrame {
             return;
         }
 
-        String instructores = this.myFormPRincipal.getMyFablab().consultarInstructores(fechas[0], fechas[1],
+        String instructores = this.myFablab.consultarInstructores(fechas[0], fechas[1],
                 horarios[0], horarios[1]);
         if (instructores.isEmpty()) {
             Ventana.imp("NO HAY INSTRUCTORES DISPONIBLES EN ESA FECHA Y HORARIO. SI AUN NO HAY INSTRUCTORES "
@@ -490,7 +471,11 @@ public class FormProgramarCurso extends javax.swing.JFrame {
         }
         for (String instructor : instructores.split("/")) {
             if (!instructor.isEmpty()) {
-                this.cmbInstructor.addItem(instructor);
+                String[] campos = instructor.split("-", 2);
+                String nombre = FABLAB.leerCampoLista(campos[0]);
+                String documento = FABLAB.leerCampoLista(campos[1]);
+                documentosInstructores.add(documento);
+                this.cmbInstructor.addItem(nombre + " - " + documento);
             }
         }
     }//GEN-LAST:event_cmdVerificarInstructoresActionPerformed
@@ -507,7 +492,7 @@ public class FormProgramarCurso extends javax.swing.JFrame {
             return;
         }
 
-        String laboratorios = this.myFormPRincipal.getMyFablab().consultarLaboratorios(fechas[0], fechas[1],
+        String laboratorios = this.myFablab.consultarLaboratorios(fechas[0], fechas[1],
                 horarios[0], horarios[1]);
         if (laboratorios.isEmpty()) {
             Ventana.imp("NO HAY LABORATORIOS DISPONIBLES EN ESA FECHA Y HORARIO.", "SISTEMA...");
@@ -522,6 +507,8 @@ public class FormProgramarCurso extends javax.swing.JFrame {
     
     private void limpiarComboInstructor(){
         this.cmbInstructor.removeAllItems();
+        documentosInstructores.clear();
+        documentosInstructores.add("");
         this.cmbInstructor.addItem("<NO SELECCIONADO>"); 
     }
     

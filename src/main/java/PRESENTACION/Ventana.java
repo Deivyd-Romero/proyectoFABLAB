@@ -1,108 +1,95 @@
 package PRESENTACION;
-        
+
+import NEGOCIO.FABLAB;
+import java.util.ArrayList;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-public class Ventana
-{
 
-public static void imp(String msg1, String msg2)
-	{
-	JOptionPane.showMessageDialog(null, msg1,msg2,3);
-	}
-	
-	
-public static void imp(int msg1, String msg2)
-	{
-		
-	JOptionPane.showMessageDialog(null, Integer.toString(msg1),msg2,3);
-	}
-	
-	
-	public static void imp(double msg1, String msg2)
-	{
-		
-	JOptionPane.showMessageDialog(null, Double.toString(msg1),msg2,3);
-	}
-	
-	public static void imp(byte msg1, String msg2)
-	{
-	JOptionPane.showMessageDialog(null, Byte.toString(msg1),msg2,3);
-	}
-	
-	
-	public static void imp(short msg1, String msg2)
-	{
-		
-	JOptionPane.showMessageDialog(null, Short.toString(msg1),msg2,3);
-	}
-	
-	
-	public static void imp(float msg1, String msg2)
-	{
-		
-	JOptionPane.showMessageDialog(null, Float.toString(msg1),msg2,3);
-	}
-	
-	
-	public static void imp(long msg1, String msg2)
-	{
-	JOptionPane.showMessageDialog(null, Long.toString(msg1),msg2,3);
-	}
-	
-public static void main(String arg[])
-	{
-		int a=leerInt("lea entero");
-		String rta="";
-		imp(a,"numero leido:");
-		for (int i=0;i<a;i++)
-			{	rta+=i+"->";
-				for(int j=0;j<i;j++)
-					rta+="*";
-				rta+="\n";
-			
-			}
-		imp("Histograma->\n"+rta, "Histograma");
-		int v=leerOption("hola");
-		System.exit(0); 
-	}
-	
-	public static int leerInt(String msg)
-	{
-	  return(Integer.parseInt(JOptionPane.showInputDialog(msg)));
-	}
-	
-	public static double leerDouble(String msg)
-	{
-	 return(Double.parseDouble(JOptionPane.showInputDialog(msg)));
-	}
-	
-	public static long leerLong(String msg)
-	{
-	  return(Long.parseLong(JOptionPane.showInputDialog(msg)));
-	}
-		
-	public static char leerChar(String msg)
-	{
-		String a=JOptionPane.showInputDialog(msg);
-		char b[]= a.toCharArray();
-		return(b[0]);
-	}
-	
-	public static byte leerByte(String msg)
-	{
-		return(Byte.parseByte(JOptionPane.showInputDialog(msg)));
-	}
-	
-	public static float leerFloat(String msg)
-	{	
-	  return(Float.parseFloat(JOptionPane.showInputDialog(msg)));
-	}
+public class Ventana {
 
-	public static String leerCadena(String msg)
-	{	
-	  return(JOptionPane.showInputDialog(msg));
-	}
-    public static int leerOption(String msg)
-    {
-    	return(JOptionPane.showOptionDialog(null,msg,"venmtana",1,2,null,null,null));
+    // La posición de cada opción conserva su código aunque se repitan los nombres.
+    static void cargarOpciones(JComboBox<String> combo, ArrayList<String> codigos, String lista) {
+        combo.removeAllItems();
+        codigos.clear();
+        codigos.add("");
+        combo.addItem("<NO SELECCIONADO>");
+        for (String opcion : lista.split("/")) {
+            if (!opcion.isEmpty()) {
+                String[] campos = opcion.split(" - ", 2);
+                String codigo = FABLAB.leerCampoLista(campos[0]);
+                codigos.add(codigo);
+                combo.addItem(codigo + " - " + FABLAB.leerCampoLista(campos[1]));
+            }
+        }
+    }
+
+    static String codigoSeleccionado(JComboBox<String> combo, ArrayList<String> codigos) {
+        int indice = combo.getSelectedIndex();
+        return indice < 0 || indice >= codigos.size() ? "" : codigos.get(indice);
+    }
+
+    public static void imp(String mensaje, String titulo) {
+        JOptionPane.showMessageDialog(null, mensaje, titulo, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void imp(int valor, String titulo) {
+        imp(String.valueOf(valor), titulo);
+    }
+
+    public static void imp(double valor, String titulo) {
+        imp(String.valueOf(valor), titulo);
+    }
+
+    public static void imp(byte valor, String titulo) {
+        imp(String.valueOf(valor), titulo);
+    }
+
+    public static void imp(short valor, String titulo) {
+        imp(String.valueOf(valor), titulo);
+    }
+
+    public static void imp(float valor, String titulo) {
+        imp(String.valueOf(valor), titulo);
+    }
+
+    public static void imp(long valor, String titulo) {
+        imp(String.valueOf(valor), titulo);
+    }
+
+    public static int leerInt(String mensaje) {
+        return Integer.parseInt(leerCadena(mensaje));
+    }
+
+    public static double leerDouble(String mensaje) {
+        return Double.parseDouble(leerCadena(mensaje));
+    }
+
+    public static long leerLong(String mensaje) {
+        return Long.parseLong(leerCadena(mensaje));
+    }
+
+    public static byte leerByte(String mensaje) {
+        return Byte.parseByte(leerCadena(mensaje));
+    }
+
+    public static float leerFloat(String mensaje) {
+        return Float.parseFloat(leerCadena(mensaje));
+    }
+
+    public static char leerChar(String mensaje) {
+        String texto = leerCadena(mensaje);
+        if (texto == null || texto.isEmpty()) {
+            throw new IllegalArgumentException("Se requiere un carácter.");
+        }
+        return texto.charAt(0);
+    }
+
+    public static String leerCadena(String mensaje) {
+        return JOptionPane.showInputDialog(mensaje);
+    }
+
+    public static int leerOption(String mensaje) {
+        return JOptionPane.showConfirmDialog(null, mensaje, "Sistema FABLAB",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
     }
 }

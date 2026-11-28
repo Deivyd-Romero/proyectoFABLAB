@@ -1,23 +1,59 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package PRESENTACION;
 
-/**
- *
- * @author hp
- */
+import NEGOCIO.FABLAB;
+
 public class FormCerrarConciliar extends javax.swing.JFrame {
     
-    private FormFABLAB myFormPrincipal;
+    private final java.util.ArrayList<String> codigosCursos = new java.util.ArrayList<>();
+    private final java.util.ArrayList<String> codigosEntregados = new java.util.ArrayList<>();
+    private final FABLAB myFablab;
 
     /**
      * Creates new form FormCerrarConciliar
      */
-    public FormCerrarConciliar(FormFABLAB myP) {
+    public FormCerrarConciliar(FABLAB fablab) {
         initComponents();
-        this.myFormPrincipal = myP;
+        this.myFablab = fablab;
+        cargarCursos();
+        cmbCurso.addActionListener(e -> cargarRecursos());
+    }
+
+    private void cargarCursos() {
+        String cursos = myFablab.listarCursosParaCerrar();
+        Ventana.cargarOpciones(cmbCurso, codigosCursos, cursos);
+        if (cmbCurso.getItemCount() > 1) {
+            cmbCurso.setSelectedIndex(1);
+        }
+        cargarRecursos();
+    }
+
+    private void cargarRecursos() {
+        javax.swing.table.DefaultTableModel modelo
+                = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount(0);
+        codigosEntregados.clear();
+        String codigoCurso = Ventana.codigoSeleccionado(cmbCurso, codigosCursos);
+        cmdCerrarConciliar.setEnabled(!codigoCurso.isEmpty());
+        if (codigoCurso.isEmpty()) {
+            return;
+        }
+        String datos = myFablab.listarRecursosEntregados(codigoCurso);
+        for (String fila : datos.split("/")) {
+            if (!fila.trim().isEmpty()) {
+                String[] campos = fila.split("\\|", -1);
+                String codigoRecurso = FABLAB.leerCampoLista(campos[0]);
+                codigosEntregados.add(codigoRecurso);
+                modelo.addRow(new Object[]{codigoRecurso + " - " + FABLAB.leerCampoLista(campos[1]),
+                    Integer.parseInt(campos[2]), 0, 0, 0});
+            }
+        }
+    }
+
+    private int leerCantidad(Object valor) {
+        if (valor == null || valor.toString().trim().isEmpty()) {
+            return 0;
+        }
+        return Integer.parseInt(valor.toString().trim());
     }
 
     /**
@@ -78,7 +114,7 @@ public class FormCerrarConciliar extends javax.swing.JFrame {
 
         txtInformeConciliacion.setColumns(20);
         txtInformeConciliacion.setRows(5);
-        txtInformeConciliacion.setEnabled(false);
+        txtInformeConciliacion.setEditable(false);
         jScrollPane2.setViewportView(txtInformeConciliacion);
 
         cmdCerrarConciliar.setText("CERRAR Y CONCILIAR");
@@ -150,7 +186,39 @@ public class FormCerrarConciliar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmdCerrarConciliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCerrarConciliarActionPerformed
-        // TODO add your handling code here:
+        String codigoCurso = Ventana.codigoSeleccionado(cmbCurso, codigosCursos);
+        if (codigoCurso.isEmpty()) {
+            Ventana.imp("No hay un curso seleccionado.", "Sistema");
+            return;
+        }
+        if (jTable1.isEditing() && !jTable1.getCellEditor().stopCellEditing()) {
+            Ventana.imp("Ingrese una cantidad entera válida.", "Sistema");
+            return;
+        }
+        javax.swing.table.DefaultTableModel modelo
+                = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        java.util.ArrayList<Integer> buenas = new java.util.ArrayList<>();
+        java.util.ArrayList<Integer> daniadas = new java.util.ArrayList<>();
+        java.util.ArrayList<Integer> perdidas = new java.util.ArrayList<>();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            try {
+                buenas.add(leerCantidad(modelo.getValueAt(i, 2)));
+                daniadas.add(leerCantidad(modelo.getValueAt(i, 3)));
+                perdidas.add(leerCantidad(modelo.getValueAt(i, 4)));
+            } catch (NumberFormatException ex) {
+                Ventana.imp("Ingrese una cantidad entera válida para cada recurso.", "Sistema");
+                return;
+            }
+        }
+        String respuesta = myFablab.cerrarCurso(
+                codigoCurso, codigosEntregados, buenas, daniadas, perdidas);
+        if (respuesta.startsWith("CIERRE DEL CURSO")) {
+            txtInformeConciliacion.setText(respuesta);
+            Ventana.imp("Curso cerrado y recursos conciliados correctamente.", "Sistema");
+            cargarCursos();
+        } else {
+            Ventana.imp(respuesta, "Sistema");
+        }
     }//GEN-LAST:event_cmdCerrarConciliarActionPerformed
 
     /**
